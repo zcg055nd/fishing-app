@@ -29,6 +29,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:380px){.form-grid{grid-template-columns:1fr}}
 .form-group{display:flex;flex-direction:column;gap:4px}
+.form-group.full{grid-column:1/-1}
 .form-group label{font-size:12px;font-weight:600;color:var(--text-light);display:flex;align-items:center;gap:3px}
 .form-group label .req{color:#e53935}
 .form-group select,.form-group input{padding:9px 11px;border:2px solid var(--border);border-radius:10px;font-size:14px;background:#fafdfd;color:var(--text);outline:none;transition:border-color .2s;appearance:none;-webkit-appearance:none}
@@ -39,6 +40,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .btn-secondary{width:100%;padding:10px;font-size:14px;font-weight:600;color:var(--primary);background:#e8f5e9;border:2px solid var(--border);border-radius:10px;cursor:pointer;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px}
 .btn-secondary:active{background:#c8e6c9}
 .btn-secondary.loading{opacity:.6;pointer-events:none}
+.btn-sm{padding:6px 14px;font-size:12px;font-weight:600;color:#fff;background:var(--primary);border:none;border-radius:8px;cursor:pointer;white-space:nowrap}
+.btn-sm:active{opacity:.8}
 .result-area{display:none}.result-area.show{display:block}
 .score-card{text-align:center;padding:24px 14px;background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;border-radius:var(--radius);margin:14px;position:relative;overflow:hidden}
 .score-card::before{content:'';position:absolute;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.05);top:-40px;right:-25px}
@@ -94,19 +97,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .stat-box{background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border-radius:10px;padding:10px;text-align:center;border:1px solid var(--border)}
 .stat-box .stat-num{font-size:22px;font-weight:800;color:var(--primary-dark)}
 .stat-box .stat-label{font-size:10px;color:var(--text-muted);margin-top:2px}
-.spot-list{display:flex;flex-direction:column;gap:8px}
-.spot-item{background:var(--card);border-radius:11px;padding:12px;border:1px solid var(--border);box-shadow:var(--shadow)}
-.spot-item .spot-name{font-size:14px;font-weight:700;color:var(--primary-dark)}
-.spot-item .spot-info{font-size:12px;color:var(--text-light);margin-top:3px;line-height:1.5}
-.spot-item .spot-tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600;margin-top:4px}
-.spot-tag.wild{background:#e8f5e9;color:#2e7d32}
-.spot-tag.pond{background:#fff3e0;color:#e65100}
-.spot-tag.river{background:#e3f2fd;color:#0d47a1}
-.spot-tag.lake{background:#f3e5f5;color:#6a1b9a}
 .empty-state{text-align:center;padding:50px 20px;color:var(--text-muted)}
 .empty-state .empty-icon{font-size:50px;margin-bottom:10px}
 .photo-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
 .photo-preview img{width:60px;height:60px;object-fit:cover;border-radius:8px;border:2px solid var(--border)}
+.input-row{display:flex;gap:8px;align-items:flex-end}
+.input-row .form-group{flex:1}
+.input-row .btn-sm{margin-bottom:1px;height:38px}
+#diaryMapContainer{width:100%;height:200px;border-radius:10px;border:2px solid var(--border);margin-top:6px;display:none}
+#spotMapContainer{width:100%;height:400px;border-radius:10px;border:2px solid var(--border);margin-top:8px;display:none}
+.fish-select-other{display:none;margin-top:6px}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .result-area.show .result-item,.result-area.show .score-card{animation:fadeInUp .3s ease both}
 .result-area.show .result-item:nth-child(2){animation-delay:.06s}
@@ -136,11 +136,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 <div class="form-group"><label><span class="req">*</span> 季节</label><select id="season"><option value="">请选择</option><option value="spring">🌱 春季（3-5月）</option><option value="summer">☀️ 夏季（6-8月）</option><option value="autumn">🍂 秋季（9-11月）</option><option value="winter">❄️ 冬季（12-2月）</option></select></div>
 <div class="form-group"><label><span class="req">*</span> 天气</label><select id="weather"><option value="">请选择</option><option value="sunny">☀️ 晴天</option><option value="cloudy">☁️ 多云</option><option value="overcast">🌥️ 阴天</option><option value="light_rain">🌦️ 小雨</option><option value="after_rain">🌈 雨后</option><option value="heavy_rain">⛈️ 大雨/暴雨</option></select></div>
 <div class="form-group"><label><span class="req">*</span> 气温（°C）</label><input type="number" id="temperature" placeholder="如：25" min="-20" max="45"></div>
+<div class="form-group"><label><span class="req">*</span> 气压（hPa）</label><input type="number" id="pressure" placeholder="如：1013" min="950" max="1060"></div>
 <div class="form-group"><label><span class="req">*</span> 风向</label><select id="wind_dir"><option value="">请选择</option><option value="N">⬆️ 北风</option><option value="NE">↗️ 东北风</option><option value="E">➡️ 东风</option><option value="SE">↘️ 东南风</option><option value="S">⬇️ 南风</option><option value="SW">↙️ 西南风</option><option value="W">⬅️ 西风</option><option value="NW">↖️ 西北风</option><option value="none">🌀 无风</option></select></div>
 <div class="form-group"><label><span class="req">*</span> 风力</label><select id="wind_force"><option value="">请选择</option><option value="0">0级 无风</option><option value="1">1级 软风</option><option value="2">2级 轻风</option><option value="3">3级 微风</option><option value="4">4级 和风</option><option value="5">5级 清劲风</option><option value="6">6级+ 强风</option></select></div>
-<div class="form-group"><label><span class="req">*</span> 水深（米）</label><input type="number" id="water_depth" placeholder="如：2.5" step="0.1" min="0.3" max="30"></div>
+<div class="form-group"><label>水深（米）选填</label><input type="number" id="water_depth" placeholder="如：2.5（选填）" step="0.1" min="0.3" max="30"></div>
 <div class="form-group"><label>水域类型</label><select id="water_type"><option value="lake">🏞️ 湖泊</option><option value="river">🌊 河流</option><option value="reservoir">💧 水库</option><option value="pond">🐟 池塘/黑坑</option></select></div>
-<div class="form-group"><label>气压（hPa）</label><input type="number" id="pressure" placeholder="如：1013（选填）" min="950" max="1060"></div>
 <div class="form-group"><label>目标鱼种</label><select id="target_fish"><option value="any">不限（推荐分析）</option><option value="crucian">鲫鱼</option><option value="carp">鲤鱼</option><option value="grass">草鱼</option><option value="silver">鲢鳙</option><option value="black">青鱼</option><option value="bream">鳊鱼</option><option value="catfish">鲶鱼/黄颡鱼</option><option value="qiaozui">翘嘴</option><option value="baitiao">白条</option><option value="luofei">罗非鱼</option><option value="huangwei">黄尾鲴</option><option value="makou">马口鱼</option><option value="heiyu">黑鱼</option></select></div>
 <div class="form-group"><label>水质</label><select id="water_quality"><option value="clear">清水</option><option value="turbid">浑水</option><option value="slight">微浑</option></select></div>
 </div>
@@ -165,41 +165,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 <div class="card">
 <div class="knowledge-section"><h3>🌡️ 天气与钓鱼</h3><div class="knowledge-list">
 <div class="knowledge-item"><strong>气压是关键：</strong>气压1005-1020hPa最适合出钓。低于1000hPa鱼浮头，难钓。</div>
-<div class="knowledge-item"><strong>雨后黄金期：</strong>雨后溶氧增加，鱼活性大增。暴雨后水浑需等1-2天。</div>
+<div class="knowledge-item"><strong>雨后黄金期：</strong>雨后溶氧增加，鱼活性大增。</div>
 <div class="knowledge-item"><strong>闷热天不好钓：</strong>气温高+气压低+无风=闷热，鱼浮头不进食。</div>
 <div class="knowledge-item"><strong>降温前一天：</strong>冷空气来临前一天，鱼疯狂觅食，最佳出钓时机！</div>
 </div></div>
 <div class="knowledge-section"><h3>🧭 风向与钓鱼</h3><div class="knowledge-list">
-<div class="knowledge-item"><strong>东南风/西南风最佳：</strong>暖湿气流带来适宜水温，鱼活性高。</div>
+<div class="knowledge-item"><strong>东南风/西南风最佳：</strong>暖湿气流带来适宜水温。</div>
 <div class="knowledge-item"><strong>北风分季节：</strong>夏季北风降温鱼活跃；冬季北风鱼活性极低。</div>
 <div class="knowledge-item"><strong>1-3级风最好：</strong>微风增加溶氧；5级以上风大不好抛竿。</div>
-<div class="knowledge-item"><strong>钓下风口：</strong>风将浮游生物吹向下风处，鱼聚集觅食。</div>
 </div></div>
 <div class="knowledge-section"><h3>🌊 水深与钓位</h3><div class="knowledge-list">
-<div class="knowledge-item"><strong>春钓滩：</strong>浅滩水温回升快，鱼来觅食产卵。</div>
-<div class="knowledge-item"><strong>夏钓潭：</strong>深水凉爽，鱼避暑；早晚可钓浅。</div>
-<div class="knowledge-item"><strong>秋钓边：</strong>近岸觅食，深浅交界是黄金钓位。</div>
-<div class="knowledge-item"><strong>冬钓阳：</strong>向阳面深水区，水温相对高。</div>
+<div class="knowledge-item"><strong>春钓滩，夏钓潭，秋钓边，冬钓阳。</strong></div>
 <div class="knowledge-item"><strong>障碍物旁：</strong>水草、树桩、桥墩旁都是鱼藏身的好地方。</div>
 </div></div>
 <div class="knowledge-section"><h3>🐟 常见鱼种习性</h3><div class="knowledge-list">
-<div class="knowledge-item"><strong>鲫鱼：</strong>适应力最强，四季可钓。活饵（蚯蚓/红虫）最稳。</div>
-<div class="knowledge-item"><strong>鲤鱼：</strong>喜暖怕光，18-26°C最活跃。重窝守钓，玉米薯饵效果好。</div>
-<div class="knowledge-item"><strong>草鱼：</strong>喜高温，25°C以上最活跃。嫩玉米粒是神饵。</div>
-<div class="knowledge-item"><strong>翘嘴：</strong>中上层掠食性鱼，路亚或活饵均可，早晚追小鱼到水面。</div>
-<div class="knowledge-item"><strong>白条：</strong>最易上手的入门鱼，浅水浮钓，蚯蚓面饵都行。</div>
-<div class="knowledge-item"><strong>黑鱼：</strong>藏身草洞障碍物，路亚雷蛙或活饵，夏季最活跃。</div>
+<div class="knowledge-item"><strong>鲫鱼：</strong>适应力最强，四季可钓。活饵最稳。</div>
+<div class="knowledge-item"><strong>鲤鱼：</strong>喜暖怕光，18-26°C最活跃。重窝守钓。</div>
+<div class="knowledge-item"><strong>翘嘴：</strong>中上层掠食性鱼，路亚或活饵均可。</div>
+<div class="knowledge-item"><strong>黑鱼：</strong>藏身草洞，路亚雷蛙或活饵。</div>
 </div></div>
 <div class="knowledge-section"><h3>🎯 线组与调漂</h3><div class="knowledge-list">
-<div class="knowledge-item"><strong>新手调漂口诀：</strong>"调平水钓1-2目"最简单实用。</div>
-<div class="knowledge-item"><strong>线组搭配原则：</strong>主线>子线，大鱼大线组，小鱼小线组。子线比主线细0.2-0.5号。</div>
-<div class="knowledge-item"><strong>看漂识鱼：</strong>鲫鱼-顿口黑漂；鲤鱼-大黑漂走漂；草鱼-大黑漂；翘嘴-快速黑漂。</div>
+<div class="knowledge-item"><strong>新手调漂：</strong>"调平水钓1-2目"最简单实用。</div>
+<div class="knowledge-item"><strong>线组搭配：</strong>主线>子线，大鱼大线组，小鱼小线组。</div>
 </div></div>
 <div class="knowledge-section"><h3>🪱 饵料与打窝</h3><div class="knowledge-list">
 <div class="knowledge-item"><strong>春冬用腥：</strong>红虫、蚯蚓、浓腥商品饵。</div>
 <div class="knowledge-item"><strong>夏用清淡：</strong>麦香/奶香/草香型，嫩玉米粒。</div>
-<div class="knowledge-item"><strong>打窝很重要：</strong>"钓鱼不打窝，钓得也不多"。提前30分钟打窝，窝料集中。</div>
-<div class="knowledge-item"><strong>补窝技巧：</strong>上鱼后及时补窝，少量多次，保持窝点有料。</div>
+<div class="knowledge-item"><strong>打窝很重要：</strong>提前30分钟打窝，窝料集中，少量多次。</div>
 </div></div>
 </div>
 </div>
@@ -215,9 +207,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 <div class="card-title"><span class="icon">✏️</span> 新建日记</div>
 <div class="diary-form">
 <div class="form-group"><label>日期</label><input type="date" id="diaryDate"></div>
-<div class="form-group"><label>地点</label><input type="text" id="diaryPlace" placeholder="如：XX水库"></div>
+<div class="input-row">
+<div class="form-group"><label>地点</label><input type="text" id="diaryPlace" placeholder="输入或定位获取"></div>
+<button class="btn-sm" onclick="locateDiary()">📍定位</button>
+</div>
+<div id="diaryMapContainer"></div>
 <div class="form-group"><label>天气</label><select id="diaryWeather"><option value="晴">☀️ 晴</option><option value="多云">☁️ 多云</option><option value="阴">🌥️ 阴</option><option value="小雨">🌦️ 小雨</option><option value="大雨">⛈️ 大雨</option></select></div>
-<div class="form-group"><label>目标鱼种</label><input type="text" id="diaryFish" placeholder="如：鲫鱼、鲤鱼"></div>
+<div class="form-group"><label>钓获鱼种</label><select id="diaryFish" onchange="onFishSelect(this)"><option value="">请选择</option><option value="鲫鱼">🐟 鲫鱼</option><option value="鲤鱼">🐟 鲤鱼</option><option value="草鱼">🐟 草鱼</option><option value="鲢鳙">🐟 鲢鳙</option><option value="鳊鱼">🐟 鳊鱼</option><option value="鲶鱼/黄颡鱼">🐟 鲶鱼/黄颡鱼</option><option value="青鱼">🐟 青鱼</option><option value="翘嘴">🐟 翘嘴</option><option value="白条">🐟 白条</option><option value="罗非鱼">🐟 罗非鱼</option><option value="黄尾鲴">🐟 黄尾鲴</option><option value="马口鱼">🐟 马口鱼</option><option value="黑鱼">🐟 黑鱼</option><option value="其他">📝 其他</option></select></div>
+<div class="fish-select-other" id="fishOther"><input type="text" id="diaryFishOther" placeholder="请输入鱼种名称" style="width:100%;padding:9px 11px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none"></div>
 <div class="form-group"><label>钓获数量</label><input type="number" id="diaryCount" placeholder="如：5" min="0"></div>
 <div class="form-group"><label>总重量（斤）</label><input type="number" id="diaryWeight" placeholder="如：3.5" step="0.1" min="0"></div>
 <div class="form-group"><label>钓获时长（小时）</label><input type="number" id="diaryHours" placeholder="如：4" step="0.5" min="0"></div>
@@ -237,19 +234,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 
 <!-- ====== 钓点页 ====== -->
 <div class="page" id="pageSpot">
-<div class="top-bar"><h1>📍 附近钓点</h1><p>发现身边的野钓和黑坑</p></div>
+<div class="top-bar"><h1>📍 钓点地图</h1><p>查看钓点，记录出钓位置</p></div>
 <div class="card">
-<button class="btn-primary" id="btnSpot" onclick="searchSpots()">📍 定位并搜索附近钓点</button>
+<button class="btn-primary" onclick="initSpotMap()">📍 定位并打开地图</button>
+<button class="btn-secondary" onclick="openAmap()" style="margin-top:8px">🗺️ 打开高德地图APP</button>
+<div id="spotMapContainer"></div>
 <div id="spotStatus" style="font-size:12px;color:var(--text-muted);margin-top:6px;text-align:center"></div>
 </div>
 <div class="card">
-<div class="spot-list" id="spotList"></div>
-<div class="empty-state" id="spotEmpty"><div class="empty-icon">📍</div><div>点击上方按钮搜索附近钓点</div></div>
-</div>
-<div class="card">
-<div class="tip-box"><div class="tip-title">💡 关于钓点数据</div>
-野钓点数据来自OpenStreetMap，显示附近自然水域（河流、湖泊、水库等）。<br>
-<strong>黑坑/收费钓场</strong>信息需要当地钓友推荐，建议加入本地钓鱼群获取最新信息。</div>
+<div class="tip-box"><div class="tip-title">💡 使用说明</div>
+• 点击"定位并打开地图"可查看当前位置和日记标记<br>
+• 🎣 图标为你的历史出钓位置（来自日记记录）<br>
+• 点击"打开高德地图APP"可使用高德地图搜索附近钓点<br>
+• 日记中记录的地点会自动显示在地图上</div>
 </div>
 </div>
 
@@ -260,7 +257,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 <div style="text-align:center;padding:16px 0">
 <div style="font-size:50px;margin-bottom:8px">🎣</div>
 <div style="font-size:18px;font-weight:700;color:var(--primary-dark)">钓鱼分析助手</div>
-<div style="font-size:12px;color:var(--text-muted);margin-top:3px">v2.0.0</div>
+<div style="font-size:12px;color:var(--text-muted);margin-top:3px">v3.0.0</div>
 </div>
 <div style="font-size:12px;line-height:1.7;color:var(--text-light);margin-top:12px">
 <p>专为钓鱼新手打造的智能分析工具。</p>
@@ -268,7 +265,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 <li>出钓指数评分</li><li>最佳出钓时段</li><li>14种鱼活性分析</li>
 <li>钓位推荐</li><li>饵料推荐</li><li>打窝建议</li>
 <li>线组搭配</li><li>浮漂吃铅建议</li><li>天气自动获取</li>
-<li>钓鱼日记</li><li>附近钓点搜索</li>
+<li>钓鱼日记</li><li>高德地图钓点标记</li>
 </ul>
 </div>
 <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
@@ -279,7 +276,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 </div>
 </div>
 
-<!-- 底部导航 -->
 <div class="bottom-nav">
 <div class="nav-item active" onclick="switchPage('pageAnalyze',this)"><div class="nav-icon">🔍</div><div class="nav-label">分析</div></div>
 <div class="nav-item" onclick="switchPage('pageKnowledge',this)"><div class="nav-icon">📚</div><div class="nav-label">知识</div></div>
@@ -288,7 +284,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 <div class="nav-item" onclick="switchPage('pageAbout',this)"><div class="nav-icon">⚙️</div><div class="nav-label">设置</div></div>
 </div>
 
+<!-- 高德地图JS API -->
+<script src="https://webapi.amap.com/maps?v=2.0&key=fa17f05f00b4c8f911281ea43c8126b4&plugin=AMap.Geolocation,AMap.PlaceSearch"></script>
 <script>
+// ===== 高德地图Key配置 =====
+// 请将 fa17f05f00b4c8f911281ea43c8126b4 替换为你自己的高德地图Key
+// 注册地址：https://lbs.amap.com （免费注册，选择"Web端(JS API)"）
+const AMAP_KEY='fa17f05f00b4c8f911281ea43c8126b4';
+
 // ===== 启动画面 =====
 window.addEventListener('load',()=>setTimeout(()=>document.getElementById('splash').classList.add('hide'),800));
 
@@ -302,7 +305,7 @@ if(id==='pageDiary')loadDiary();
 window.scrollTo(0,0);
 }
 
-// ===== 天气自动获取 =====
+// ===== 天气自动获取（改进版） =====
 function fetchWeather(){
 const btn=document.getElementById('btnWeather');
 const st=document.getElementById('weatherStatus');
@@ -314,52 +317,65 @@ navigator.geolocation.getCurrentPosition(pos=>{
 const lat=pos.coords.latitude,lon=pos.coords.longitude;
 btn.textContent='⏳ 正在获取天气...';
 st.textContent=`📍 ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
-fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m&timezone=auto`)
+// 使用Open-Meteo获取更详细数据：包含相对湿度、露点等
+fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto&forecast_days=1`)
 .then(r=>r.json()).then(d=>{
 const c=d.current;
 // 气温
 document.getElementById('temperature').value=Math.round(c.temperature_2m);
-// 气压
+// 气压（必填）
 document.getElementById('pressure').value=Math.round(c.surface_pressure);
-// 风力
-const ws=c.wind_speed_10m;
-let wf=0;if(ws>=1)wf=1;if(ws>=6)wf=2;if(ws>=12)wf=3;if(ws>=20)wf=4;if(ws>=29)wf=5;if(ws>=39)wf=6;
+// 风力 - 根据风速和阵风综合判断
+const ws=c.wind_speed_10m,wg=c.wind_gusts_10m||0;
+const maxWind=Math.max(ws,wg);
+let wf=0;if(maxWind>=1)wf=1;if(maxWind>=6)wf=2;if(maxWind>=12)wf=3;if(maxWind>=20)wf=4;if(maxWind>=29)wf=5;if(maxWind>=39)wf=6;
 document.getElementById('wind_force').value=wf;
 // 风向
 const wd=c.wind_direction_10m;
-let wdir='N';if(wd>=22.5)wdir='NE';if(wd>=67.5)wdir='E';if(wd>=112.5)wdir='SE';if(wd>=157.5)wdir='S';if(wd>=202.5)wdir='SW';if(wd>=247.5)wdir='W';if(wd>=292.5)wdir='NW';if(wd>=337.5)wdir='N';
+let wdir='N';if(wd>=22.5&&wd<67.5)wdir='NE';if(wd>=67.5&&wd<112.5)wdir='E';if(wd>=112.5&&wd<157.5)wdir='SE';if(wd>=157.5&&wd<202.5)wdir='S';if(wd>=202.5&&wd<247.5)wdir='SW';if(wd>=247.5&&wd<292.5)wdir='W';if(wd>=292.5&&wd<337.5)wdir='NW';
 document.getElementById('wind_dir').value=wdir;
-// 天气
+// 天气 - 更精确的WMO天气码映射
 const wc=c.weather_code;
-let w='cloudy';if(wc===0)w='sunny';if(wc<=3)w='cloudy';if(wc<=48)w='overcast';if(wc<=57)w='light_rain';if(wc<=67)w='light_rain';if(wc<=77)w='overcast';if(wc<=82)w='heavy_rain';if(wc<=86)w='overcast';if(wc<=99)w='heavy_rain';if(wc===0)w='sunny';
+let w='cloudy';
+if(wc===0)w='sunny';
+else if(wc<=3)w='cloudy';
+else if(wc<=48)w='overcast';
+else if(wc<=57)w='light_rain';
+else if(wc<=67)w='light_rain';
+else if(wc<=77)w='overcast';
+else if(wc<=82)w='heavy_rain';
+else if(wc<=86)w='overcast';
+else if(wc<=99)w='heavy_rain';
 document.getElementById('weather').value=w;
 // 季节
 const m=new Date().getMonth()+1;
-let s='spring';if(m>=6)s='summer';if(m>=9)s='autumn';if(m>=12||m<=2)s='winter';
+let s='spring';if(m>=6&&m<=8)s='summer';if(m>=9&&m<=11)s='autumn';if(m>=12||m<=2)s='winter';
 document.getElementById('season').value=s;
-st.textContent='✅ 天气数据已自动填入！';
+// 天气描述
+const weatherNames={sunny:'晴',cloudy:'多云',overcast:'阴',light_rain:'小雨',heavy_rain:'大雨'};
+st.textContent=`✅ 已获取：${Math.round(c.temperature_2m)}°C ${weatherNames[w]||''} | 气压${Math.round(c.surface_pressure)}hPa | 湿度${c.relative_humidity_2m}%`;
 st.style.color='var(--primary)';
 resetWeatherBtn();
 }).catch(e=>{st.textContent='⚠️ 获取天气失败，请手动填写';resetWeatherBtn();});
-},err=>{st.textContent='⚠️ 定位失败，请检查位置权限';resetWeatherBtn();},{timeout:10000});
+},err=>{st.textContent='⚠️ 定位失败，请检查位置权限';resetWeatherBtn();},{timeout:15000,enableHighAccuracy:true});
 }
 function resetWeatherBtn(){const b=document.getElementById('btnWeather');b.classList.remove('loading');b.textContent='📍 定位并获取当前天气';}
 
 // ===== 钓鱼知识库 =====
 const FISH_DB={
-crucian:{name:'鲫鱼',emoji:'🐟',tempRange:[4,32],bestTemp:[15,25],season:{spring:.9,summer:.7,autumn:.9,winter:.5},weather:{sunny:.7,cloudy:.8,overcast:.9,light_rain:.9,after_rain:.95,heavy_rain:.2},depth:{shallow:.9,medium:.8,deep:.4},bait:{spring:'红虫、蚯蚓（活饵最佳），腥香型商品饵如"野战蓝鲫"+"九一八"',summer:'清淡型商品饵，麦香/奶香型，少量加腥；嫩玉米粒',autumn:'腥香型商品饵，"野战蓝鲫"+"疯钓鲫"，蚯蚓红虫',winter:'红虫首选，活蚯蚓，浓腥型商品饵如"红虫风暴"'},floatWeight:{base:'1.0-1.5g',tip:'鲫鱼口轻，吃铅宜小不宜大'},method:'底钓为主，冬季可钓离底10-20cm',line:{main:'0.6-0.8号',sub:'0.3-0.4号',hook:'袖钩2-3号',rod:'3.6m 三七调'},nest:{spring:'酒米+少量红虫颗粒，打窝量一小把',summer:'酒米+麝香米，打窝量一小把，少量多次',autumn:'酒米+商品窝料，打窝量两把，窝点要集中',winter:'红虫颗粒+酒米，打窝量少但要精准'},tips:'鲫鱼是新手最易上手的鱼种，四季可钓'},
-carp:{name:'鲤鱼',emoji:'🐟',tempRange:[8,30],bestTemp:[18,26],season:{spring:.8,summer:.9,autumn:.85,winter:.2},weather:{sunny:.7,cloudy:.8,overcast:.85,light_rain:.85,after_rain:.9,heavy_rain:.15},depth:{shallow:.5,medium:.9,deep:.85},bait:{spring:'薯香型商品饵，玉米粒，红薯块；加少量腥味',summer:'谷香型、薯香型商品饵，发酵玉米，嫩玉米粒；偏清淡',autumn:'薯香+腥香型商品饵，螺蛳，玉米粒；需大量打窝',winter:'浓腥型商品饵，红虫搭配；但鲤鱼冬季活性极低'},floatWeight:{base:'2.0-3.0g',tip:'鲤鱼力气大，吃铅可适当加大'},method:'底钓，重窝守钓，调钝钓钝',line:{main:'1.5-2.0号',sub:'0.8-1.2号',hook:'伊势尼3-5号',rod:'4.5m 二八调'},nest:{spring:'玉米+红薯块+商品窝料，打窝量两三把',summer:'发酵玉米+颗粒，打窝量三把以上，守钓重窝',autumn:'玉米+螺蛳+颗粒，打窝量要大，守钓',winter:'鲤鱼冬季几乎不进窝，不建议专门作钓'},tips:'鲤鱼警觉性高，打窝要重，守钓要有耐心'},
-grass:{name:'草鱼',emoji:'🐟',tempRange:[12,32],bestTemp:[22,30],season:{spring:.5,summer:.95,autumn:.7,winter:.05},weather:{sunny:.8,cloudy:.75,overcast:.7,light_rain:.7,after_rain:.8,heavy_rain:.1},depth:{shallow:.6,medium:.85,deep:.7},bait:{spring:'嫩草、芦苇芯，少量玉米粒，草香型商品饵',summer:'嫩玉米粒（首选），发酵麦粒，草香型商品饵，芦苇芯',autumn:'玉米粒，草香型商品饵，蚂蚱等昆虫饵',winter:'草鱼冬季基本不进食'},floatWeight:{base:'2.5-4.0g',tip:'草鱼体型大，吃铅要大，远投可用5g以上'},method:'可底钓可浮钓，夏季钓浮效果更好',line:{main:'2.5-3.0号',sub:'1.5-2.0号',hook:'伊势尼6-8号',rod:'5.4m 二八调'},nest:{spring:'嫩草+少量玉米，打窝量两把',summer:'嫩玉米+草捆，打窝量要大，持续补窝',autumn:'玉米+颗粒，打窝量三把',winter:'不建议'},tips:'草鱼喜高温，夏季是最佳季节'},
+crucian:{name:'鲫鱼',emoji:'🐟',tempRange:[4,32],bestTemp:[15,25],season:{spring:.9,summer:.7,autumn:.9,winter:.5},weather:{sunny:.7,cloudy:.8,overcast:.9,light_rain:.9,after_rain:.95,heavy_rain:.2},depth:{shallow:.9,medium:.8,deep:.4},bait:{spring:'红虫、蚯蚓（活饵最佳），腥香型商品饵如"野战蓝鲫"+"九一八"',summer:'清淡型商品饵，麦香/奶香型，少量加腥；嫩玉米粒',autumn:'腥香型商品饵，"野战蓝鲫"+"疯钓鲫"，蚯蚓红虫',winter:'红虫首选，活蚯蚓，浓腥型商品饵如"红虫风暴"'},floatWeight:{base:'1.0-1.5g',tip:'鲫鱼口轻，吃铅宜小不宜大'},method:'底钓为主，冬季可钓离底10-20cm',line:{main:'0.6-0.8号',sub:'0.3-0.4号',hook:'袖钩2-3号',rod:'3.6m 三七调'},nest:{spring:'酒米+少量红虫颗粒，打窝量一小把',summer:'酒米+麝香米，打窝量一小把，少量多次',autumn:'酒米+商品窝料，打窝量两把',winter:'红虫颗粒+酒米，打窝量少但要精准'},tips:'鲫鱼是新手最易上手的鱼种，四季可钓'},
+carp:{name:'鲤鱼',emoji:'🐟',tempRange:[8,30],bestTemp:[18,26],season:{spring:.8,summer:.9,autumn:.85,winter:.2},weather:{sunny:.7,cloudy:.8,overcast:.85,light_rain:.85,after_rain:.9,heavy_rain:.15},depth:{shallow:.5,medium:.9,deep:.85},bait:{spring:'薯香型商品饵，玉米粒，红薯块；加少量腥味',summer:'谷香型、薯香型商品饵，发酵玉米，嫩玉米粒',autumn:'薯香+腥香型商品饵，螺蛳，玉米粒',winter:'浓腥型商品饵，红虫搭配；但鲤鱼冬季活性极低'},floatWeight:{base:'2.0-3.0g',tip:'鲤鱼力气大，吃铅可适当加大'},method:'底钓，重窝守钓，调钝钓钝',line:{main:'1.5-2.0号',sub:'0.8-1.2号',hook:'伊势尼3-5号',rod:'4.5m 二八调'},nest:{spring:'玉米+红薯块+商品窝料，打窝量两三把',summer:'发酵玉米+颗粒，打窝量三把以上，守钓重窝',autumn:'玉米+螺蛳+颗粒，打窝量要大',winter:'不推荐'},tips:'鲤鱼警觉性高，打窝要重，守钓要有耐心'},
+grass:{name:'草鱼',emoji:'🐟',tempRange:[12,32],bestTemp:[22,30],season:{spring:.5,summer:.95,autumn:.7,winter:.05},weather:{sunny:.8,cloudy:.75,overcast:.7,light_rain:.7,after_rain:.8,heavy_rain:.1},depth:{shallow:.6,medium:.85,deep:.7},bait:{spring:'嫩草、芦苇芯，少量玉米粒，草香型商品饵',summer:'嫩玉米粒（首选），发酵麦粒，草香型商品饵',autumn:'玉米粒，草香型商品饵，蚂蚱等昆虫饵',winter:'草鱼冬季基本不进食'},floatWeight:{base:'2.5-4.0g',tip:'草鱼体型大，吃铅要大'},method:'可底钓可浮钓，夏季钓浮效果更好',line:{main:'2.5-3.0号',sub:'1.5-2.0号',hook:'伊势尼6-8号',rod:'5.4m 二八调'},nest:{spring:'嫩草+少量玉米，打窝量两把',summer:'嫩玉米+草捆，打窝量要大，持续补窝',autumn:'玉米+颗粒，打窝量三把',winter:'不推荐'},tips:'草鱼喜高温，夏季是最佳季节'},
 silver:{name:'鲢鳙',emoji:'🐟',tempRange:[15,33],bestTemp:[25,32],season:{spring:.3,summer:.95,autumn:.5,winter:.02},weather:{sunny:.9,cloudy:.7,overcast:.5,light_rain:.5,after_rain:.7,heavy_rain:.05},depth:{shallow:.5,medium:.8,deep:.7},bait:{spring:'酸臭型鲢鳙饵，春季活性低不推荐',summer:'酸臭型鲢鳙专用饵，"天元鲢鳙"等，雾化要快',autumn:'酸臭型鲢鳙饵，可适当加腥',winter:'鲢鳙冬季几乎不进食'},floatWeight:{base:'3.0-5.0g',tip:'鲢鳙钓浮用大吃铅，大肚漂最合适'},method:'浮钓为主，钓水层1-2米深',line:{main:'2.0-3.0号',sub:'1.0-1.5号',hook:'新关东0.5-1号',rod:'4.5-5.4m'},nest:{spring:'不推荐',summer:'鲢鳙窝料（酸臭），手抛+铅皮带窝，量大持续',autumn:'酸臭窝料，持续抽窝',winter:'不推荐'},tips:'鲢鳙喜高温闷热天，晴天中午最活跃'},
-black:{name:'青鱼',emoji:'🐟',tempRange:[10,30],bestTemp:[18,28],season:{spring:.5,summer:.8,autumn:.7,winter:.1},weather:{sunny:.7,cloudy:.75,overcast:.8,light_rain:.7,after_rain:.8,heavy_rain:.1},depth:{shallow:.3,medium:.7,deep:.95},bait:{spring:'螺蛳（首选），河蚌肉，青鱼专用颗粒饵',summer:'螺蛳，河蚌肉，青鱼颗粒饵，玉米粒',autumn:'螺蛳，河蚌肉，浓腥商品饵',winter:'青鱼冬季活性极低'},floatWeight:{base:'3.0-5.0g',tip:'青鱼个体大，吃铅要大，深水重铅底钓'},method:'底钓，重铅到底，守钓大物',line:{main:'3.0-5.0号',sub:'2.0-3.0号',hook:'伊势尼8-12号',rod:'5.4-7.2m 二八调'},nest:{spring:'螺蛳碎+颗粒，打窝量三把以上',summer:'螺蛳+颗粒+玉米，大量打窝守钓',autumn:'螺蛳+颗粒，大量打窝',winter:'不推荐'},tips:'青鱼是"大物"，需要耐心守钓'},
+black:{name:'青鱼',emoji:'🐟',tempRange:[10,30],bestTemp:[18,28],season:{spring:.5,summer:.8,autumn:.7,winter:.1},weather:{sunny:.7,cloudy:.75,overcast:.8,light_rain:.7,after_rain:.8,heavy_rain:.1},depth:{shallow:.3,medium:.7,deep:.95},bait:{spring:'螺蛳（首选），河蚌肉，青鱼专用颗粒饵',summer:'螺蛳，河蚌肉，青鱼颗粒饵，玉米粒',autumn:'螺蛳，河蚌肉，浓腥商品饵',winter:'青鱼冬季活性极低'},floatWeight:{base:'3.0-5.0g',tip:'青鱼个体大，吃铅要大'},method:'底钓，重铅到底，守钓大物',line:{main:'3.0-5.0号',sub:'2.0-3.0号',hook:'伊势尼8-12号',rod:'5.4-7.2m 二八调'},nest:{spring:'螺蛳碎+颗粒，打窝量三把以上',summer:'螺蛳+颗粒+玉米，大量打窝守钓',autumn:'螺蛳+颗粒，大量打窝',winter:'不推荐'},tips:'青鱼是"大物"，需要耐心守钓'},
 bream:{name:'鳊鱼',emoji:'🐟',tempRange:[8,30],bestTemp:[18,26],season:{spring:.7,summer:.8,autumn:.75,winter:.3},weather:{sunny:.7,cloudy:.8,overcast:.85,light_rain:.8,after_rain:.85,heavy_rain:.15},depth:{shallow:.7,medium:.9,deep:.5},bait:{spring:'腥香型商品饵，蚯蚓，玉米粒',summer:'草香型商品饵，嫩玉米粒，麦粒',autumn:'腥香型商品饵，玉米粒，蚯蚓',winter:'活蚯蚓，红虫，浓腥型商品饵'},floatWeight:{base:'1.5-2.5g',tip:'鳊鱼口轻但比鲫鱼大，吃铅适中'},method:'底钓或离底钓',line:{main:'1.0-1.5号',sub:'0.5-0.8号',hook:'袖钩3-4号/伊豆2-3号',rod:'3.6-4.5m 三七调'},nest:{spring:'酒米+少量颗粒',summer:'酒米+麝香米，少量多次',autumn:'酒米+商品窝料',winter:'少量红虫颗粒'},tips:'鳊鱼喜群居，一旦上鱼可能连竿'},
 catfish:{name:'鲶鱼/黄颡鱼',emoji:'🐟',tempRange:[10,32],bestTemp:[20,28],season:{spring:.6,summer:.9,autumn:.6,winter:.1},weather:{sunny:.5,cloudy:.7,overcast:.85,light_rain:.9,after_rain:.85,heavy_rain:.3},depth:{shallow:.7,medium:.8,deep:.6},bait:{spring:'蚯蚓（首选），红虫，活虾',summer:'蚯蚓，活虾，鸡肝，小泥鳅；夜钓效果极佳',autumn:'蚯蚓，活虾，红虫',winter:'冬季活性低，不建议专门作钓'},floatWeight:{base:'2.0-3.5g',tip:'鲶鱼吃口凶猛，吃铅可大'},method:'底钓，夜钓效果远好于白天',line:{main:'1.5-2.0号',sub:'0.8-1.0号',hook:'伊豆4-6号/丸世6-8号',rod:'3.6-4.5m'},nest:{spring:'鸡肝碎+蚯蚓段，少量打窝',summer:'鸡肝碎+蚯蚓，傍晚打窝夜钓',autumn:'鸡肝碎+红虫颗粒',winter:'不推荐'},tips:'夜行性鱼类，阴天和夜间最活跃'},
-qiaozui:{name:'翘嘴',emoji:'🐟',tempRange:[10,33],bestTemp:[20,30],season:{spring:.6,summer:.95,autumn:.7,winter:.2},weather:{sunny:.8,cloudy:.75,overcast:.7,light_rain:.7,after_rain:.8,heavy_rain:.1},depth:{shallow:.6,medium:.8,deep:.5},bait:{spring:'活虾、小鱼（活饵），路亚用米诺/亮片',summer:'路亚（米诺/铅笔/铁板），活虾，小鱼，早晚水面炸水时最佳',autumn:'路亚用米诺/亮片，活虾，蚯蚓',winter:'翘嘴冬季活性低，不建议专门作钓'},floatWeight:{base:'2.0-3.5g',tip:'翘嘴吃口凶猛，可适当加大吃铅'},method:'路亚为主，也可浮钓中上层，早晚追小鱼到水面',line:{main:'1.2-1.5号',sub:'0.6-1.0号',hook:'伊豆3-5号',rod:'路亚竿或4.5m'},nest:{spring:'一般不打窝，用活饵或路亚搜索',summer:'可用泥鳅打窝（注意当地法规），路亚搜索',autumn:'不打窝，路亚搜索',winter:'不推荐'},tips:'翘嘴是路亚爱好者最爱，早晚水面炸水时最兴奋'},
-baitiao:{name:'白条',emoji:'🐟',tempRange:[5,33],bestTemp:[18,28],season:{spring:.8,summer:.9,autumn:.8,winter:.4},weather:{sunny:.8,cloudy:.8,overcast:.85,light_rain:.8,after_rain:.85,heavy_rain:.2},depth:{shallow:.9,medium:.6,deep:.3},bait:{spring:'蚯蚓，红虫，面饵，腥香型商品饵',summer:'面饵，拉饵，蚯蚓，小钩细线',autumn:'蚯蚓，红虫，面饵',winter:'红虫，蚯蚓，浓腥商品饵'},floatWeight:{base:'0.5-1.0g',tip:'白条口轻口快，吃铅越小越好'},method:'浮钓上层或半水，拉饵频率要快',line:{main:'0.4-0.6号',sub:'0.2-0.3号',hook:'袖钩1-2号',rod:'2.7-3.6m 软调'},nest:{spring:'腥味商品饵散炮，频率要快',summer:'拉饵抽频率，不需打窝',autumn:'腥味散炮，频率快',winter:'少量红虫颗粒'},tips:'白条最易上手，新手练竿首选，拉饵频率是关键'},
-luofei:{name:'罗非鱼',emoji:'🐟',tempRange:[15,35],bestTemp:[25,32],season:{spring:.3,summer:.95,autumn:.4,winter:.02},weather:{sunny:.9,cloudy:.7,overcast:.6,light_rain:.6,after_rain:.7,heavy_rain:.05},depth:{shallow:.7,medium:.8,deep:.5},bait:{spring:'腥香型商品饵，红虫，蚯蚓；春季活性低',summer:'腥香型商品饵，"罗非1号"，冻饵，红虫',autumn:'腥香型商品饵，红虫',winter:'罗非鱼冬季几乎不进食（南方除外）'},floatWeight:{base:'1.5-2.5g',tip:'罗非吃口猛，吃铅适中'},method:'底钓，调灵钓灵',line:{main:'1.5-2.0号',sub:'0.8-1.2号',hook:'伊势尼3-5号',rod:'3.6-4.5m'},nest:{spring:'不推荐',summer:'腥味窝料+颗粒，打窝量两把',autumn:'腥味窝料+颗粒',winter:'不推荐'},tips:'罗非鱼南方常见，北方冬季无法存活'},
+qiaozui:{name:'翘嘴',emoji:'🐟',tempRange:[10,33],bestTemp:[20,30],season:{spring:.6,summer:.95,autumn:.7,winter:.2},weather:{sunny:.8,cloudy:.75,overcast:.7,light_rain:.7,after_rain:.8,heavy_rain:.1},depth:{shallow:.6,medium:.8,deep:.5},bait:{spring:'活虾、小鱼，路亚用米诺/亮片',summer:'路亚（米诺/铅笔/铁板），活虾，早晚炸水时最佳',autumn:'路亚用米诺/亮片，活虾',winter:'翘嘴冬季活性低，不建议专门作钓'},floatWeight:{base:'2.0-3.5g',tip:'翘嘴吃口凶猛，可适当加大吃铅'},method:'路亚为主，也可浮钓中上层',line:{main:'1.2-1.5号',sub:'0.6-1.0号',hook:'伊豆3-5号',rod:'路亚竿或4.5m'},nest:{spring:'一般不打窝，路亚搜索',summer:'可用泥鳅打窝（注意当地法规），路亚搜索',autumn:'不打窝，路亚搜索',winter:'不推荐'},tips:'翘嘴是路亚爱好者最爱，早晚水面炸水时最兴奋'},
+baitiao:{name:'白条',emoji:'🐟',tempRange:[5,33],bestTemp:[18,28],season:{spring:.8,summer:.9,autumn:.8,winter:.4},weather:{sunny:.8,cloudy:.8,overcast:.85,light_rain:.8,after_rain:.85,heavy_rain:.2},depth:{shallow:.9,medium:.6,deep:.3},bait:{spring:'蚯蚓，红虫，面饵，腥香型商品饵',summer:'面饵，拉饵，蚯蚓，小钩细线',autumn:'蚯蚓，红虫，面饵',winter:'红虫，蚯蚓，浓腥商品饵'},floatWeight:{base:'0.5-1.0g',tip:'白条口轻口快，吃铅越小越好'},method:'浮钓上层或半水，拉饵频率要快',line:{main:'0.4-0.6号',sub:'0.2-0.3号',hook:'袖钩1-2号',rod:'2.7-3.6m 软调'},nest:{spring:'腥味商品饵散炮，频率要快',summer:'拉饵抽频率，不需打窝',autumn:'腥味散炮，频率快',winter:'少量红虫颗粒'},tips:'白条最易上手，新手练竿首选'},
+luofei:{name:'罗非鱼',emoji:'🐟',tempRange:[15,35],bestTemp:[25,32],season:{spring:.3,summer:.95,autumn:.4,winter:.02},weather:{sunny:.9,cloudy:.7,overcast:.6,light_rain:.6,after_rain:.7,heavy_rain:.05},depth:{shallow:.7,medium:.8,deep:.5},bait:{spring:'腥香型商品饵，红虫，蚯蚓',summer:'腥香型商品饵，"罗非1号"，冻饵，红虫',autumn:'腥香型商品饵，红虫',winter:'罗非鱼冬季几乎不进食（南方除外）'},floatWeight:{base:'1.5-2.5g',tip:'罗非吃口猛，吃铅适中'},method:'底钓，调灵钓灵',line:{main:'1.5-2.0号',sub:'0.8-1.2号',hook:'伊势尼3-5号',rod:'3.6-4.5m'},nest:{spring:'不推荐',summer:'腥味窝料+颗粒，打窝量两把',autumn:'腥味窝料+颗粒',winter:'不推荐'},tips:'罗非鱼南方常见，北方冬季无法存活'},
 huangwei:{name:'黄尾鲴',emoji:'🐟',tempRange:[8,30],bestTemp:[18,26],season:{spring:.8,summer:.6,autumn:.8,winter:.3},weather:{sunny:.7,cloudy:.8,overcast:.85,light_rain:.8,after_rain:.85,heavy_rain:.15},depth:{shallow:.5,medium:.9,deep:.7},bait:{spring:'藻类饵，腥香型商品饵，蚯蚓',summer:'藻类饵，清淡型商品饵，玉米粒',autumn:'腥香型商品饵，藻类饵，蚯蚓',winter:'浓腥型商品饵，蚯蚓'},floatWeight:{base:'1.0-1.5g',tip:'黄尾鲴口轻，吃铅宜小'},method:'底钓或离底钓，调灵钓灵',line:{main:'0.8-1.2号',sub:'0.4-0.6号',hook:'袖钩2-3号',rod:'3.6-4.5m 三七调'},nest:{spring:'藻类+酒米，打窝量一把',summer:'藻类+颗粒，少量多次',autumn:'藻类+酒米+商品窝料',winter:'少量红虫颗粒'},tips:'黄尾鲴刮食藻类，钓底要灵'},
-makou:{name:'马口鱼',emoji:'🐟',tempRange:[8,30],bestTemp:[18,26],season:{spring:.8,summer:.7,autumn:.8,winter:.3},weather:{sunny:.8,cloudy:.8,overcast:.8,light_rain:.8,after_rain:.85,heavy_rain:.2},depth:{shallow:.8,medium:.7,deep:.3},bait:{spring:'路亚（微型米诺/亮片），蚯蚓，红虫',summer:'路亚（微型米诺/飞蝇），蚯蚓，活虾',autumn:'路亚（微型米诺/亮片），蚯蚓',winter:'浓腥商品饵，蚯蚓'},floatWeight:{base:'0.5-1.0g',tip:'马口口小，吃铅要小'},method:'路亚为主，溪流浅滩搜索，也可浮钓',line:{main:'0.6-0.8号',sub:'0.3-0.4号',hook:'袖钩1-2号',rod:'路亚竿（UL调）或2.7-3.6m'},nest:{spring:'不打窝，路亚搜索',summer:'不打窝，路亚搜索',autumn:'不打窝，路亚搜索',winter:'少量红虫颗粒'},tips:'马口是溪流路亚的入门鱼种，体型小但手感好'},
-heiyu:{name:'黑鱼',emoji:'🐟',tempRange:[12,33],bestTemp:[22,30],season:{spring:.5,summer:.95,autumn:.6,winter:.05},weather:{sunny:.8,cloudy:.7,overcast:.6,light_rain:.6,after_rain:.7,heavy_rain:.1},depth:{shallow:.8,medium:.7,deep:.3},bait:{spring:'路亚（雷蛙/软虫），活饵（小泥鳅/青蛙）',summer:'路亚（雷蛙/软虫/波扒），活饵（小泥鳅/青蛙），草洞/障碍物旁',autumn:'路亚（软虫/亮片），活饵',winter:'黑鱼冬季几乎不进食'},floatWeight:{base:'2.0-4.0g',tip:'黑鱼用路亚竿不需要浮漂，台钓用大吃铅'},method:'路亚为主，找草洞/障碍物，"戳草洞"是经典钓法',line:{main:'路亚用PE线1.0-2.0号',sub:'前导线3-5号',hook:'路亚钩/伊势尼8号以上',rod:'路亚竿（M-MH调）'},nest:{spring:'不打窝，路亚搜索草洞',summer:'不打窝，路亚搜索草洞和障碍物',autumn:'不打窝，路亚搜索',winter:'不推荐'},tips:'黑鱼护崽，发现小鱼群时用雷蛙模拟入侵，容易触发攻击'}
+makou:{name:'马口鱼',emoji:'🐟',tempRange:[8,30],bestTemp:[18,26],season:{spring:.8,summer:.7,autumn:.8,winter:.3},weather:{sunny:.8,cloudy:.8,overcast:.8,light_rain:.8,after_rain:.85,heavy_rain:.2},depth:{shallow:.8,medium:.7,deep:.3},bait:{spring:'路亚（微型米诺/亮片），蚯蚓，红虫',summer:'路亚（微型米诺/飞蝇），蚯蚓，活虾',autumn:'路亚（微型米诺/亮片），蚯蚓',winter:'浓腥商品饵，蚯蚓'},floatWeight:{base:'0.5-1.0g',tip:'马口口小，吃铅要小'},method:'路亚为主，溪流浅滩搜索',line:{main:'0.6-0.8号',sub:'0.3-0.4号',hook:'袖钩1-2号',rod:'路亚竿（UL调）或2.7-3.6m'},nest:{spring:'不打窝，路亚搜索',summer:'不打窝，路亚搜索',autumn:'不打窝，路亚搜索',winter:'少量红虫颗粒'},tips:'马口是溪流路亚的入门鱼种'},
+heiyu:{name:'黑鱼',emoji:'🐟',tempRange:[12,33],bestTemp:[22,30],season:{spring:.5,summer:.95,autumn:.6,winter:.05},weather:{sunny:.8,cloudy:.7,overcast:.6,light_rain:.6,after_rain:.7,heavy_rain:.1},depth:{shallow:.8,medium:.7,deep:.3},bait:{spring:'路亚（雷蛙/软虫），活饵（小泥鳅/青蛙）',summer:'路亚（雷蛙/软虫/波扒），活饵，草洞/障碍物旁',autumn:'路亚（软虫/亮片），活饵',winter:'黑鱼冬季几乎不进食'},floatWeight:{base:'2.0-4.0g',tip:'黑鱼用路亚竿不需要浮漂'},method:'路亚为主，找草洞/障碍物，"戳草洞"是经典钓法',line:{main:'PE线1.0-2.0号',sub:'前导线3-5号',hook:'路亚钩/伊势尼8号以上',rod:'路亚竿（M-MH调）'},nest:{spring:'不打窝，路亚搜索草洞',summer:'不打窝，路亚搜索草洞和障碍物',autumn:'不打窝，路亚搜索',winter:'不推荐'},tips:'黑鱼护崽，发现小鱼群时用雷蛙模拟入侵'}
 };
 
 const TIME_SLOTS={spring:{best:['09:00-11:00','15:00-17:00'],good:['07:00-09:00','11:00-13:00','17:00-19:00'],ok:['06:00-07:00','13:00-15:00'],bad:['19:00-06:00']},summer:{best:['05:00-08:00','18:00-20:00'],good:['08:00-10:00','16:00-18:00'],ok:['10:00-12:00','14:00-16:00'],bad:['12:00-14:00','20:00-05:00']},autumn:{best:['08:00-11:00','15:00-18:00'],good:['06:00-08:00','11:00-13:00','18:00-20:00'],ok:['13:00-15:00'],bad:['20:00-06:00']},winter:{best:['10:00-14:00'],good:['09:00-10:00','14:00-16:00'],ok:['08:00-09:00','16:00-17:00'],bad:['17:00-08:00']}};
@@ -371,12 +387,12 @@ const weather=document.getElementById('weather').value;
 const temp=parseFloat(document.getElementById('temperature').value);
 const windDir=document.getElementById('wind_dir').value;
 const windForce=document.getElementById('wind_force').value;
-const waterDepth=parseFloat(document.getElementById('water_depth').value);
+const waterDepth=parseFloat(document.getElementById('water_depth').value)||0;
 const waterType=document.getElementById('water_type').value;
 const pressure=document.getElementById('pressure').value?parseFloat(document.getElementById('pressure').value):null;
 const targetFish=document.getElementById('target_fish').value;
 const waterQuality=document.getElementById('water_quality').value;
-if(!season||!weather||isNaN(temp)||!windDir||windForce===''||isNaN(waterDepth)){alert('请填写所有带 * 的必填项！');return;}
+if(!season||!weather||isNaN(temp)||!windDir||windForce===''||!document.getElementById('pressure').value){alert('请填写所有带 * 的必填项（季节、天气、气温、风向、风力、气压）！');return;}
 let score=70;const factors=[];
 if(temp>=15&&temp<=28){score+=10;factors.push('温度适宜');}else if((temp>=10&&temp<15)||(temp>28&&temp<=32)){score+=5;factors.push('温度尚可');}else if(temp<4||temp>35){score-=15;factors.push('温度极端');}else{score-=5;factors.push('温度偏低/偏高');}
 if(['after_rain','cloudy','overcast'].includes(weather)){score+=8;factors.push('天气适合出钓');}else if(weather==='light_rain'){score+=5;factors.push('小雨天气可钓');}else if(weather==='sunny'){score+=0;factors.push('晴天尚可');}else if(weather==='heavy_rain'){score-=20;factors.push('大雨不宜出钓');}
@@ -384,7 +400,7 @@ if(['SE','S','SW'].includes(windDir)){score+=5;factors.push('南风系有利于�
 const wf=parseInt(windForce);
 if(wf>=1&&wf<=3){score+=5;factors.push('微风增加溶氧');}else if(wf===0){score+=0;factors.push('无风，溶氧略低');}else if(wf===4){score-=3;factors.push('风力偏大');}else if(wf>=5){score-=10;factors.push('风大，不宜出钓');}
 if(pressure){if(pressure>=1005&&pressure<=1020){score+=5;factors.push('气压正常');}else if(pressure<1000){score-=10;factors.push('气压低，鱼易浮头');}else if(pressure>1025){score-=3;factors.push('气压偏高');}}
-if(waterDepth>=1&&waterDepth<=3){score+=3;factors.push('水深适中');}else if(waterDepth>5){score-=3;factors.push('水深偏深');}
+if(waterDepth>0){if(waterDepth>=1&&waterDepth<=3){score+=3;factors.push('水深适中');}else if(waterDepth>5){score-=3;factors.push('水深偏深');}}
 score=Math.max(0,Math.min(100,score));
 let scoreLevel,scoreEmoji,scoreDesc;
 if(score>=85){scoreLevel='极佳';scoreEmoji='🎣🔥';scoreDesc='今天出钓条件非常好！鱼活性高，吃口积极，放心出竿！';}
@@ -393,9 +409,8 @@ else if(score>=55){scoreLevel='一般';scoreEmoji='😐';scoreDesc='今天条件
 else if(score>=40){scoreLevel='较差';scoreEmoji='😓';scoreDesc='今天出钓条件不太理想，建议调整策略或改天出钓。';}
 else{scoreLevel='极差';scoreEmoji='🚫';scoreDesc='今天条件很差，不建议出钓。改天再战！';}
 const timeSlots=TIME_SLOTS[season];
-let timeAdj='';if(weather==='sunny'&&season==='summer')timeAdj='💡 夏季晴天，建议避开中午高温，早晚出钓最佳';else if(weather==='light_rain')timeAdj='💡 小雨天气全天可钓，但注意安全，雷电务必收竿';else if(weather==='after_rain')timeAdj='💡 雨后水中溶氧高，鱼活性好，是出钓黄金时段';else if(season==='winter')timeAdj='💡 冬季务必等太阳出来后出钓，水温回升鱼才开口';
-const fishResults=[];
-const fishKeys=targetFish==='any'?Object.keys(FISH_DB):[targetFish];
+let timeAdj='';if(weather==='sunny'&&season==='summer')timeAdj='💡 夏季晴天，建议避开中午高温，早晚出钓最佳';else if(weather==='light_rain')timeAdj='💡 小雨天气全天可钓，但注意安全';else if(weather==='after_rain')timeAdj='💡 雨后水中溶氧高，鱼活性好，是出钓黄金时段';else if(season==='winter')timeAdj='💡 冬季务必等太阳出来后出钓，水温回升鱼才开口';
+const fishResults=[];const fishKeys=targetFish==='any'?Object.keys(FISH_DB):[targetFish];
 fishKeys.forEach(key=>{const fish=FISH_DB[key];if(!fish)return;let activity=0;let reasons=[];
 const tMin=fish.tempRange[0],tMax=fish.tempRange[1],bMin=fish.bestTemp[0],bMax=fish.bestTemp[1];
 if(temp<tMin||temp>tMax){activity-=30;reasons.push(`温度${temp<tMin?'过低':'过高'}（${temp}°C不在${fish.name}适宜范围${tMin}-${tMax}°C）`);}
@@ -403,7 +418,7 @@ else if(temp>=bMin&&temp<=bMax){activity+=30;reasons.push(`温度在最佳范围
 else{activity+=15;reasons.push('温度在可钓范围');}
 activity+=fish.season[season]*30;if(fish.season[season]>=.8)reasons.push(`${seasonName(season)}是${fish.name}的活跃季节`);else if(fish.season[season]<=.3)reasons.push(`${seasonName(season)}${fish.name}活性低`);
 activity+=fish.weather[weather]*20;if(fish.weather[weather]>=.8)reasons.push(`当前天气适合钓${fish.name}`);
-let dc;if(waterDepth<=1.5)dc='shallow';else if(waterDepth<=3)dc='medium';else dc='deep';
+let dc;if(waterDepth<=0)dc='medium';else if(waterDepth<=1.5)dc='shallow';else if(waterDepth<=3)dc='medium';else dc='deep';
 activity+=fish.depth[dc]*15;
 if(pressure&&pressure<1000){activity-=15;reasons.push('气压低，鱼可能浮头');}
 activity=Math.max(0,Math.min(100,activity));
@@ -414,21 +429,20 @@ const topFish=fishResults.filter(f=>f.activity>=40);
 const baitRecs=topFish.map(f=>({name:f.name,bait:f.bait[season],method:f.method}));
 const nestRecs=topFish.filter(f=>f.activity>=50).map(f=>({name:f.name,nest:f.nest[season]}));
 const lineRecs=topFish.filter(f=>f.activity>=50).map(f=>({name:f.name,line:f.line}));
-const floatRecs=topFish.filter(f=>f.activity>=50).map(f=>{let ew=[];if(waterDepth>3)ew.push('水深偏深，建议取上限');if(waterDepth<1)ew.push('水浅，建议取下限');if(wf>=4)ew.push('风力较大，建议加大吃铅');if(waterQuality==='turbid')ew.push('浑水可加大吃铅');return{name:f.name,base:f.floatWeight.base,tip:f.floatWeight.tip,extra:ew};});
-// 钓位推荐
+const floatRecs=topFish.filter(f=>f.activity>=50).map(f=>{let ew=[];if(waterDepth>3)ew.push('水深偏深，建议取上限');if(waterDepth>0&&waterDepth<1)ew.push('水浅，建议取下限');if(wf>=4)ew.push('风力较大，建议加大吃铅');if(waterQuality==='turbid')ew.push('浑水可加大吃铅');return{name:f.name,base:f.floatWeight.base,tip:f.floatWeight.tip,extra:ew};});
 const spotRecs=generateSpotRecs(season,weather,windDir,waterDepth,waterType,fishResults);
 const ra=document.getElementById('resultArea');ra.classList.add('show');
 document.getElementById('scoreCard').innerHTML=`<div class="score-number">${scoreEmoji} ${score}</div><div class="score-label">今日出钓指数：${scoreLevel}</div><div class="score-desc">${scoreDesc}<br>${factors.join('；')}</div>`;
 document.getElementById('timeResult').innerHTML=`<div class="result-item-header"><div class="result-item-icon" style="background:#fff3e0">⏰</div><div class="result-item-title">最佳出钓时段</div></div><div class="result-item-body"><div class="timeline">${timeSlots.best.map(t=>`<div class="time-slot best">⭐${t}</div>`).join('')}${timeSlots.good.map(t=>`<div class="time-slot good">👍${t}</div>`).join('')}${timeSlots.ok.map(t=>`<div class="time-slot ok">😐${t}</div>`).join('')}${timeSlots.bad.map(t=>`<div class="time-slot bad">❌${t}</div>`).join('')}</div>${timeAdj?`<div class="tip-box"><div class="tip-title">💡 时段提示</div>${timeAdj}</div>`:''}<div style="margin-top:6px;font-size:10px;color:#999">⭐最佳 👍不错 😐一般 ❌不佳</div></div>`;
 document.getElementById('fishResult').innerHTML=`<div class="result-item-header"><div class="result-item-icon" style="background:#e8f5e9">🐟</div><div class="result-item-title">鱼种活性分析</div></div><div class="result-item-body"><div class="fish-cards">${fishResults.map(f=>`<div class="fish-card"><div class="fish-name">${f.emoji} ${f.name}</div><div class="fish-activity ${f.level}">${f.level==='high'?'🟢活跃度高':f.level==='medium'?'🟡活跃度中等':'🔴活跃度低'}（${Math.round(f.activity)}分）</div><div class="fish-detail">${f.reasons.map(r=>`• ${r}`).join('<br>')}<br>• 钓法：${f.method}</div></div>`).join('')}</div></div>`;
 document.getElementById('spotResult').innerHTML=`<div class="result-item-header"><div class="result-item-icon" style="background:#e3f2fd">📍</div><div class="result-item-title">钓位推荐</div></div><div class="result-item-body">${spotRecs.map(r=>`<div style="margin-bottom:10px"><div class="highlight">🎯 ${r.title}</div><div style="margin-top:3px">${r.desc}</div></div>`).join('')}</div>`;
-document.getElementById('baitResult').innerHTML=`<div class="result-item-header"><div class="result-item-icon" style="background:#fce4ec">🪱</div><div class="result-item-title">饵料推荐</div></div><div class="result-item-body">${baitRecs.length>0?baitRecs.map(b=>`<div style="margin-bottom:10px"><div class="highlight">🎯 ${b.name}</div><div style="margin-top:3px"><strong>推荐饵料：</strong>${b.bait}</div><div style="margin-top:2px"><strong>钓法建议：</strong>${b.method}</div></div>`).join(''):'<div class="warn">当前条件下鱼活性较低，建议改天出钓</div>'}${waterQuality==='turbid'?'<div class="tip-box"><div class="tip-title">💡 浑水提示</div>浑水用味道浓的饵料，颜色用亮色（白/黄）</div>':''}${waterQuality==='clear'?'<div class="tip-box"><div class="tip-title">💡 清水提示</div>清水中饵料颜色宜自然，避免过浓味道；线组要细</div>':''}</div>`;
-document.getElementById('nestResult').innerHTML=`<div class="result-item-header"><div class="result-item-icon" style="background:#fff3e0">🪺</div><div class="result-item-title">打窝建议</div></div><div class="result-item-body">${nestRecs.length>0?nestRecs.map(n=>`<div style="margin-bottom:10px"><div class="highlight">🎯 ${n.name}</div><div style="margin-top:3px">${n.nest}</div></div>`).join(''):'<div class="warn">当前条件下鱼活性较低，建议改天出钓</div>'}<div class="beginner-tip"><div class="tip-title">📖 新手小课堂：打窝要点</div><strong>提前打窝：</strong>出钓前30分钟-1小时打窝，让鱼聚集。<br><strong>窝料集中：</strong>窝料要投在一个点上，不要散开。<br><strong>少量多次：</strong>补窝要少量多次，不要一次投太多吓跑鱼。<br><strong>打窝方式：</strong>手抛（近岸）、打窝器（远投精准）、铅皮带窝（钓鲢鳙抽窝）。</div></div>`;
-document.getElementById('lineResult').innerHTML=`<div class="result-item-header"><div class="result-item-icon" style="background:#f3e5f5">🧵</div><div class="result-item-title">线组搭配</div></div><div class="result-item-body">${lineRecs.length>0?lineRecs.map(l=>`<div style="margin-bottom:10px"><div class="highlight">🎯 ${l.name}</div><div style="margin-top:3px"><strong>主线：</strong>${l.line.main} &nbsp;<strong>子线：</strong>${l.line.sub}</div><div style="margin-top:2px"><strong>鱼钩：</strong>${l.line.hook} &nbsp;<strong>钓竿：</strong>${l.line.rod}</div></div>`).join(''):'<div class="warn">当前条件下鱼活性较低，建议改天出钓</div>'}<div class="beginner-tip"><div class="tip-title">📖 新手小课堂：线组搭配原则</div><strong>主线>子线：</strong>子线比主线细0.2-0.5号，挂底时断子线保主线。<br><strong>大鱼大线组：</strong>目标鱼越大，线组越粗。<br><strong>冬季线组要细：</strong>鱼口轻，线组越细信号越明显。<br><strong>新手建议：</strong>不确定时选偏大线组，避免断线跑鱼。</div></div>`;
-document.getElementById('floatResult').innerHTML=`<div class="result-item-header"><div class="result-item-icon" style="background:#e3f2fd">🎯</div><div class="result-item-title">浮漂吃铅推荐</div></div><div class="result-item-body">${floatRecs.length>0?floatRecs.map(f=>`<div style="margin-bottom:10px"><div class="highlight">🎯 ${f.name}</div><div style="margin-top:3px"><strong>推荐吃铅：</strong><span style="color:#e53935;font-size:15px;font-weight:700">${f.base}</span></div><div style="margin-top:2px;font-size:12px;color:#888">${f.tip}</div>${f.extra.length>0?`<div style="margin-top:3px">${f.extra.map(e=>`<span class="warn">⚠️ ${e}</span>`).join('；')}</div>`:''}</div>`).join(''):'<div class="warn">当前条件下鱼活性较低，建议改天出钓</div>'}<div class="beginner-tip"><div class="tip-title">📖 新手小课堂：什么是"吃铅"？</div>吃铅量就是浮漂能承受的铅坠重量。<strong>简单记忆：</strong>小鱼小吃铅，大鱼大吃铅；水深大吃铅，水浅小吃铅；风大加吃铅，风小减吃铅。</div></div>`;
+document.getElementById('baitResult').innerHTML=`<div class="result-item-header"><div class="result-item-icon" style="background:#fce4ec">🪱</div><div class="result-item-title">饵料推荐</div></div><div class="result-item-body">${baitRecs.length>0?baitRecs.map(b=>`<div style="margin-bottom:10px"><div class="highlight">🎯 ${b.name}</div><div style="margin-top:3px"><strong>推荐饵料：</strong>${b.bait}</div><div style="margin-top:2px"><strong>钓法建议：</strong>${b.method}</div></div>`).join(''):'<div class="warn">当前条件下鱼活性较低，建议改天出钓</div>'}</div>`;
+document.getElementById('nestResult').innerHTML=`<div class="result-item-header"><div class="result-item-icon" style="background:#fff3e0">🪺</div><div class="result-item-title">打窝建议</div></div><div class="result-item-body">${nestRecs.length>0?nestRecs.map(n=>`<div style="margin-bottom:10px"><div class="highlight">🎯 ${n.name}</div><div style="margin-top:3px">${n.nest}</div></div>`).join(''):'<div class="warn">当前条件下鱼活性较低，建议改天出钓</div>'}<div class="beginner-tip"><div class="tip-title">📖 新手小课堂：打窝要点</div><strong>提前打窝：</strong>出钓前30分钟-1小时打窝。<br><strong>窝料集中：</strong>窝料要投在一个点上。<br><strong>少量多次：</strong>补窝要少量多次。<br><strong>打窝方式：</strong>手抛（近岸）、打窝器（远投）、铅皮带窝（抽窝）。</div></div>`;
+document.getElementById('lineResult').innerHTML=`<div class="result-item-header"><div class="result-item-icon" style="background:#f3e5f5">🧵</div><div class="result-item-title">线组搭配</div></div><div class="result-item-body">${lineRecs.length>0?lineRecs.map(l=>`<div style="margin-bottom:10px"><div class="highlight">🎯 ${l.name}</div><div style="margin-top:3px"><strong>主线：</strong>${l.line.main} &nbsp;<strong>子线：</strong>${l.line.sub}</div><div style="margin-top:2px"><strong>鱼钩：</strong>${l.line.hook} &nbsp;<strong>钓竿：</strong>${l.line.rod}</div></div>`).join(''):'<div class="warn">当前条件下鱼活性较低，建议改天出钓</div>'}<div class="beginner-tip"><div class="tip-title">📖 线组搭配原则</div><strong>主线>子线：</strong>子线比主线细0.2-0.5号，挂底断子线保主线。<br><strong>大鱼大线组，小鱼小线组。</strong><br><strong>冬季线组要细：</strong>鱼口轻，线组越细信号越明显。</div></div>`;
+document.getElementById('floatResult').innerHTML=`<div class="result-item-header"><div class="result-item-icon" style="background:#e3f2fd">🎯</div><div class="result-item-title">浮漂吃铅推荐</div></div><div class="result-item-body">${floatRecs.length>0?floatRecs.map(f=>`<div style="margin-bottom:10px"><div class="highlight">🎯 ${f.name}</div><div style="margin-top:3px"><strong>推荐吃铅：</strong><span style="color:#e53935;font-size:15px;font-weight:700">${f.base}</span></div><div style="margin-top:2px;font-size:12px;color:#888">${f.tip}</div>${f.extra.length>0?`<div style="margin-top:3px">${f.extra.map(e=>`<span class="warn">⚠️ ${e}</span>`).join('；')}</div>`:''}</div>`).join(''):'<div class="warn">当前条件下鱼活性较低，建议改天出钓</div>'}<div class="beginner-tip"><div class="tip-title">📖 吃铅选择</div>小鱼小吃铅，大鱼大吃铅；水深大吃铅，水浅小吃铅；风大加吃铅，风小减吃铅。</div></div>`;
 const tips=generateTips(season,weather,temp,windDir,wf,waterDepth,waterType,pressure,waterQuality);
 document.getElementById('tipResult').innerHTML=`<div class="result-item-header"><div class="result-item-icon" style="background:#f3e5f5">📝</div><div class="result-item-title">综合建议</div></div><div class="result-item-body">${tips.map(t=>`<div style="margin-bottom:5px">${t}</div>`).join('')}</div>`;
-saveHistory({date:new Date().toLocaleString('zh-CN'),summary:`${seasonName(season)}/${weather}/${temp}°C/水深${waterDepth}m/推荐：${fishResults[0]?fishResults[0].name:'—'}`,score,scoreEmoji});
+saveHistory({date:new Date().toLocaleString('zh-CN'),summary:`${seasonName(season)}/${weather}/${temp}°C/气压${pressure||'—'}hPa/推荐：${fishResults[0]?fishResults[0].name:'—'}`,score,scoreEmoji});
 ra.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -436,41 +450,70 @@ function seasonName(s){return{spring:'春季',summer:'夏季',autumn:'秋季',wi
 
 function generateSpotRecs(season,weather,windDir,waterDepth,waterType,fishResults){
 const recs=[];
-if(season==='spring')recs.push({title:'春钓滩',desc:'选择向阳的浅滩，水草附近，水温回升快鱼聚集觅食产卵。1-1.5米水深最佳。'});
-if(season==='summer')recs.push({title:'夏钓潭',desc:'选择树荫下、进水口、深浅交界处。白天2-3米深水，早晚可钓浅水1-1.5米。'});
-if(season==='autumn')recs.push({title:'秋钓边',desc:'选择深浅交界处、水草边、铧尖位置。鱼在近岸疯狂觅食为越冬储备。'});
-if(season==='winter')recs.push({title:'冬钓阳',desc:'选择向阳面深水区、障碍物附近。找鱼窝，水深3-5米，太阳出来后鱼才开口。'});
-if(weather==='after_rain')recs.push({title:'雨后钓入水口',desc:'雨后入水口附近溶氧高、食物丰富，鱼聚集觅食。水库河流的入水口是黄金钓位。'});
-if(weather==='sunny'&&season==='summer')recs.push({title:'晴天钓深钓阴',desc:'夏季晴天鱼在深水或阴凉处避暑。找树荫、桥下、深水区。'});
-if(['SE','S','SW'].includes(windDir))recs.push({title:'钓下风口',desc:'南风将浮游生物吹向下风处，鱼聚集在下风面觅食。选择下风岸作钓。'});
-if(waterType==='river')recs.push({title:'河流找洄水湾',desc:'河流中找洄水湾、缓流区、深浅交界处。鱼在缓流区休息觅食。'});
-if(waterType==='reservoir')recs.push({title:'水库找深浅交界',desc:'水库水面大鱼分散，重点找深浅交界、铧尖、沟汊。打窝诱鱼是关键。'});
-if(waterType==='pond')recs.push({title:'黑坑找鱼道',desc:'黑坑找增氧机附近、喂料点、鱼道。正钓抢鱼快，偷驴需精细。'});
-const topFish=fishResults.filter(f=>f.activity>=60);
-if(topFish.length>0){const fishNames=topFish.slice(0,3).map(f=>f.name).join('、');recs.push({title:'针对目标鱼种',desc:`当前${fishNames}活跃度较高，重点选择这些鱼种偏好的钓位。参考上方鱼种分析中的钓法建议。`});}
+if(season==='spring')recs.push({title:'春钓滩',desc:'选择向阳的浅滩，水草附近，1-1.5米水深最佳。'});
+if(season==='summer')recs.push({title:'夏钓潭',desc:'选择树荫下、进水口、深浅交界处。白天2-3米深水，早晚可钓浅。'});
+if(season==='autumn')recs.push({title:'秋钓边',desc:'选择深浅交界处、水草边、铧尖位置。'});
+if(season==='winter')recs.push({title:'冬钓阳',desc:'选择向阳面深水区，水深3-5米。'});
+if(weather==='after_rain')recs.push({title:'雨后钓入水口',desc:'入水口附近溶氧高、食物丰富，鱼聚集觅食。'});
+if(weather==='sunny'&&season==='summer')recs.push({title:'晴天钓深钓阴',desc:'找树荫、桥下、深水区。'});
+if(['SE','S','SW'].includes(windDir))recs.push({title:'钓下风口',desc:'南风将浮游生物吹向下风处，鱼聚集在下风面。'});
+if(waterType==='river')recs.push({title:'河流找洄水湾',desc:'找洄水湾、缓流区、深浅交界处。'});
+if(waterType==='reservoir')recs.push({title:'水库找深浅交界',desc:'找深浅交界、铧尖、沟汊。'});
+if(waterType==='pond')recs.push({title:'黑坑找鱼道',desc:'找增氧机附近、喂料点、鱼道。'});
 return recs;
 }
 
 function generateTips(season,weather,temp,windDir,windForce,waterDepth,waterType,pressure,waterQuality){
 const tips=[];
-if(weather==='heavy_rain')tips.push('🚨 <strong>安全第一！</strong>大雨/暴雨不建议出钓，注意雷电和山洪风险');
-if(weather==='light_rain')tips.push('⚠️ <strong>小雨注意安全</strong>，穿好防滑鞋，雷电务必收竿');
+if(weather==='heavy_rain')tips.push('🚨 <strong>安全第一！</strong>大雨不建议出钓，注意雷电');
+if(weather==='light_rain')tips.push('⚠️ <strong>小雨注意安全</strong>，雷电务必收竿');
 if(windForce>=5)tips.push('⚠️ <strong>风力较大</strong>，建议找背风位置');
-if(pressure&&pressure<1000)tips.push('🌡️ <strong>低气压</strong>，鱼可能浮头，建议改天或钓浮');
+if(pressure&&pressure<1000)tips.push('🌡️ <strong>低气压</strong>，鱼可能浮头');
 if(pressure&&pressure>1025)tips.push('🌡️ <strong>高气压</strong>，需耐心守钓');
-tips.push('🆕 <strong>打窝是关键！</strong>提前30分钟-1小时打窝，窝料集中');
-tips.push('🆕 <strong>调漂建议：</strong>新手调平水钓1-2目，简单实用');
-tips.push('🆕 <strong>耐心最重要：</strong>钓鱼是修身养性，享受过程 🎣');
+tips.push('🆕 <strong>打窝是关键！</strong>提前30分钟打窝，窝料集中');
+tips.push('🆕 <strong>调漂建议：</strong>新手调平水钓1-2目');
+tips.push('🆕 <strong>耐心最重要：</strong>享受过程 🎣');
 return tips;
 }
 
 // ===== 钓鱼日记 =====
 function getDiary(){try{return JSON.parse(localStorage.getItem('fishing_diary')||'[]');}catch{return[];}}
 function showDiaryForm(){document.getElementById('diaryFormCard').style.display='block';document.getElementById('diaryDate').value=new Date().toISOString().split('T')[0];window.scrollTo({top:0,behavior:'smooth'});}
-function hideDiaryForm(){document.getElementById('diaryFormCard').style.display='none';document.getElementById('photoPreview').innerHTML='';}
-function previewPhoto(input){const pv=document.getElementById('photoPreview');pv.innerHTML='';if(input.files&&input.files[0]){const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas');const max=200;let w=img.width,h=img.height;if(w>max){h=h*max/w;w=max;}if(h>max){w=w*max/h;h=max;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);const thumb=document.createElement('img');thumb.src=canvas.toDataURL('image/jpeg',0.6);thumb.style.cssText='width:60px;height:60px;object-fit:cover;border-radius:8px;border:2px solid var(--border)';pv.appendChild(thumb);};img.src=e.target.result;};reader.readAsDataURL(input.files[0]);}}
+function hideDiaryForm(){document.getElementById('diaryFormCard').style.display='none';document.getElementById('photoPreview').innerHTML='';document.getElementById('diaryMapContainer').style.display='none';}
+function onFishSelect(sel){document.getElementById('fishOther').style.display=sel.value==='其他'?'block':'none';}
+function previewPhoto(input){const pv=document.getElementById('photoPreview');pv.innerHTML='';if(input.files&&input.files[0]){const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas');const max=200;let w=img.width,h=img.height;if(w>max){h=h*max/w;w=max;}if(h>max){w=w*max/h;h=max;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);const thumb=document.createElement('img');thumb.src=canvas.toDataURL('image/jpeg',0.6);pv.appendChild(thumb);};img.src=e.target.result;};reader.readAsDataURL(input.files[0]);}}
+
+// 日记定位
+let diaryLat=0,diaryLng=0,diaryMap=null;
+function locateDiary(){
+if(!navigator.geolocation){alert('浏览器不支持定位');return;}
+navigator.geolocation.getCurrentPosition(pos=>{
+diaryLat=pos.coords.latitude;diaryLng=pos.coords.longitude;
+document.getElementById('diaryPlace').value=`${diaryLat.toFixed(4)}, ${diaryLng.toFixed(4)}`;
+// 用高德地图显示位置
+if(AMAP_KEY!=='fa17f05f00b4c8f911281ea43c8126b4'&&typeof AMap!=='undefined'){
+document.getElementById('diaryMapContainer').style.display='block';
+diaryMap=new AMap.Map('diaryMapContainer',{zoom:14,center:[diaryLng,diaryLat]});
+new AMap.Marker({position:[diaryLng,diaryLat],map:diaryMap,title:'出钓位置'});
+// 点击地图选位置
+diaryMap.on('click',e=>{
+diaryLng=e.lnglat.getLng();diaryLat=e.lnglat.getLat();
+document.getElementById('diaryPlace').value=`${diaryLat.toFixed(4)}, ${diaryLng.toFixed(4)}`;
+diaryMap.clearMap();
+new AMap.Marker({position:[diaryLng,diaryLat],map:diaryMap,title:'出钓位置'});
+});
+}else{
+// 没有高德Key时用简单提示
+document.getElementById('diaryMapContainer').style.display='none';
+alert('已获取位置坐标！\n如需地图功能，请在设置中配置高德地图Key。');
+}
+},err=>{alert('定位失败，请检查位置权限');},{timeout:10000,enableHighAccuracy:true});
+}
+
 function saveDiary(){
-const d={id:Date.now(),date:document.getElementById('diaryDate').value,place:document.getElementById('diaryPlace').value,weather:document.getElementById('diaryWeather').value,fish:document.getElementById('diaryFish').value,count:document.getElementById('diaryCount').value||0,weight:document.getElementById('diaryWeight').value||0,hours:document.getElementById('diaryHours').value||0,bait:document.getElementById('diaryBait').value,note:document.getElementById('diaryNote').value};
+const fishSel=document.getElementById('diaryFish').value;
+const fishName=fishSel==='其他'?document.getElementById('diaryFishOther').value:fishSel;
+const d={id:Date.now(),date:document.getElementById('diaryDate').value,place:document.getElementById('diaryPlace').value,weather:document.getElementById('diaryWeather').value,fish:fishName,count:document.getElementById('diaryCount').value||0,weight:document.getElementById('diaryWeight').value||0,hours:document.getElementById('diaryHours').value||0,bait:document.getElementById('diaryBait').value,note:document.getElementById('diaryNote').value,lat:diaryLat,lng:diaryLng};
 const pv=document.getElementById('photoPreview');if(pv.querySelector('img'))d.photo=pv.querySelector('img').src;
 const list=getDiary();list.unshift(d);if(list.length>100)list.pop();
 localStorage.setItem('fishing_diary',JSON.stringify(list));
@@ -487,44 +530,57 @@ el.innerHTML=list.map((d,i)=>`<div class="diary-item"><button class="diary-delet
 }
 function deleteDiary(i){if(confirm('确定删除这条日记？')){const list=getDiary();list.splice(i,1);localStorage.setItem('fishing_diary',JSON.stringify(list));loadDiary();}}
 
-// ===== 附近钓点搜索 =====
-function searchSpots(){
-const btn=document.getElementById('btnSpot');const st=document.getElementById('spotStatus');const sl=document.getElementById('spotList');const empty=document.getElementById('spotEmpty');
-btn.classList.add('loading');btn.textContent='⏳ 正在定位...';st.textContent='';
-if(!navigator.geolocation){st.textContent='⚠️ 浏览器不支持定位';resetSpotBtn();return;}
-navigator.geolocation.getCurrentPosition(pos=>{
-const lat=pos.coords.latitude,lon=pos.coords.longitude;
-btn.textContent='⏳ 正在搜索钓点...';st.textContent=`📍 ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
-const query=`[out:json][timeout:25];(node["natural"~"water"](around:8000,${lat},${lon});way["natural"~"water"](around:8000,${lat},${lon});node["waterway"~"river|stream|canal"](around:8000,${lat},${lon});way["waterway"~"river|stream|canal"](around:8000,${lat},${lon});node["leisure"="fishing"](around:15000,${lat},${lon});node["sport"="fishing"](around:15000,${lat},${lon}););out body center;`;
-fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(query)})
-.then(r=>r.json()).then(d=>{
-const spots=d.elements||[];
-if(spots.length===0){st.textContent='附近未找到水域，建议扩大搜索范围';empty.style.display='block';resetSpotBtn();return;}
-const processed=spots.map(s=>{
-const name=s.tags?.name||s.tags?.waterway||s.tags?.natural||'未知水域';
-const dist=getDistance(lat,lon,s.lat||s.center?.lat||lat,s.lon||s.center?.lon||lon);
-let type='wild';let tag='野钓';let tagClass='wild';
-if(s.tags?.leisure==='fishing'||s.tags?.sport==='fishing'){type='pond';tag='钓场';tagClass='pond';}
-else if(s.tags?.waterway){type='river';tag='河流';tagClass='river';}
-else if(s.tags?.natural==='water'){type='lake';tag='湖泊/水库';tagClass='lake';}
-return{name,dist:dist.toFixed(1),type,tag,tagClass,tags:s.tags};
-}).sort((a,b)=>a.dist-b.dist).slice(0,20);
-empty.style.display='none';
-sl.innerHTML=processed.map(s=>`<div class="spot-item"><div class="spot-name">${s.name}</div><div class="spot-info">📍 距离约 ${s.dist} 公里</div><div class="spot-tag ${s.tagClass}">${s.tag}</div>${s.tags?.waterway?`<div style="font-size:11px;color:var(--text-muted);margin-top:3px">水域类型：${s.tags.waterway}</div>`:''}</div>`).join('');
-st.textContent=`✅ 找到 ${processed.length} 个附近水域`;
-resetSpotBtn();
-}).catch(e=>{st.textContent='⚠️ 搜索失败，请稍后重试';resetSpotBtn();});
-},err=>{st.textContent='⚠️ 定位失败，请检查位置权限';resetSpotBtn();},{timeout:15000});
+// ===== 钓点地图 =====
+let spotMap=null;
+function initSpotMap(){
+const st=document.getElementById('spotStatus');
+if(AMAP_KEY==='fa17f05f00b4c8f911281ea43c8126b4'||typeof AMap==='undefined'){
+st.textContent='⚠️ 请先配置高德地图Key（在设置页查看说明）';return;
 }
-function resetSpotBtn(){const b=document.getElementById('btnSpot');b.classList.remove('loading');b.textContent='📍 定位并搜索附近钓点';}
-function getDistance(lat1,lon1,lat2,lon2){const R=6371;const dLat=(lat2-lat1)*Math.PI/180;const dLon=(lon2-lon1)*Math.PI/180;const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
+if(!navigator.geolocation){st.textContent='⚠️ 浏览器不支持定位';return;}
+st.textContent='⏳ 正在定位...';
+navigator.geolocation.getCurrentPosition(pos=>{
+const lat=pos.coords.latitude,lng=pos.coords.longitude;
+document.getElementById('spotMapContainer').style.display='block';
+spotMap=new AMap.Map('spotMapContainer',{zoom:13,center:[lng,lat]});
+// 当前位置标记
+new AMap.Marker({position:[lng,lat],map:spotMap,title:'我的位置',icon:new AMap.Icon({size:new AMap.Size(25,34),image:'https://webapi.amap.com/theme/v1.3/markers/n/loc.png'})});
+// 加载日记中的出钓位置
+const diaries=getDiary().filter(d=>d.lat&&d.lng);
+diaries.forEach(d=>{
+const marker=new AMap.Marker({position:[d.lng,d.lat],map:spotMap,title:d.place||'出钓位置'});
+marker.setLabel({content:`🎣 ${d.fish||''}`,direction:'top'});
+// 点击标记显示日记信息
+const info=new AMap.InfoWindow({content:`<div style="padding:8px;font-size:13px"><strong>${d.place||'出钓位置'}</strong><br>${d.date} ${d.weather||''}<br>钓获：${d.fish||'—'} ${d.count?d.count+'条':''} ${d.weight?d.weight+'斤':''}</div>`});
+marker.on('click',()=>info.open(spotMap,marker.getPosition()));
+});
+st.textContent=`✅ 已定位，共${diaries.length}个出钓标记`;
+},err=>{st.textContent='⚠️ 定位失败，请检查位置权限';},{timeout:15000,enableHighAccuracy:true});
+}
+
+function openAmap(){
+// 尝试打开高德地图APP
+const lat=diaryLat||0,lng=diaryLng||0;
+// 高德地图URL Scheme
+const amapUrl=`iosamap://viewMap?sourceApplication=fishing&poiname=我的位置&lat=${lat}&lon=${lng}&dev=0`;
+const amapWebUrl=`https://uri.amap.com/marker?position=${lng},${lat}&name=我的位置&src=fishing`;
+// 尝试打开APP，失败则打开网页版
+const startTime=Date.now();
+window.location.href=amapUrl;
+setTimeout(()=>{
+if(Date.now()-startTime<2000){
+// 可能没有安装高德地图，打开网页版
+window.open(amapWebUrl,'_blank');
+}
+},1500);
+}
 
 // ===== 历史记录 =====
 function getHistory(){try{return JSON.parse(localStorage.getItem('fishing_history')||'[]');}catch{return[];}}
 function saveHistory(r){const h=getHistory();h.unshift(r);if(h.length>50)h.pop();localStorage.setItem('fishing_history',JSON.stringify(h));}
 function clearAllData(){if(confirm('确定清除所有本地数据？')){localStorage.removeItem('fishing_history');localStorage.removeItem('fishing_diary');alert('已清除！');}}
 
-// 初始化日记
+// 初始化
 loadDiary();
 </script>
 </body>
