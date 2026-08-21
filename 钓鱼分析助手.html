@@ -106,6 +106,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .input-row .btn-sm{margin-bottom:1px;height:38px}
 #diaryMapContainer{width:100%;height:200px;border-radius:10px;border:2px solid var(--border);margin-top:6px;display:none}
 #spotMapContainer{width:100%;height:400px;border-radius:10px;border:2px solid var(--border);margin-top:8px;display:none}
+.record-gallery{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:360px){.record-gallery{grid-template-columns:1fr}}
+.record-card{background:#f9fbe7;border-radius:12px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:transform .15s}
+.record-card:active{transform:scale(.97)}
+.record-card img{width:100%;height:120px;object-fit:cover;display:block}
+.record-card .rc-info{padding:8px 10px}
+.record-card .rc-date{font-size:11px;color:var(--text-muted)}
+.record-card .rc-fish{font-size:13px;font-weight:700;color:var(--primary-dark)}
+.record-card .rc-detail{font-size:11px;color:var(--text-light);margin-top:2px}
+.record-empty{text-align:center;padding:30px;color:var(--text-muted);font-size:13px}
 .fish-select-other{display:none;margin-top:6px}
 .diary-view-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
 .diary-view-overlay.show{opacity:1;visibility:visible}
@@ -117,7 +127,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .diary-view-card .dv-label{color:var(--text-muted);flex-shrink:0}
 .diary-view-card .dv-val{color:var(--text);font-weight:600;text-align:right;max-width:60%}
 .diary-view-card .dv-note{margin-top:12px;padding:10px;background:#f9fbe7;border-radius:10px;font-size:13px;line-height:1.7;color:var(--text-light)}
-.diary-view-card .dv-photo{margin-top:10px;max-width:100%;border-radius:10px}
+.diary-view-card .dv-photo{margin-top:10px;max-width:100%;border-radius:10px;cursor:pointer}
+.photo-zoom-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s;cursor:pointer}
+.photo-zoom-overlay.show{opacity:1;visibility:visible}
+.photo-zoom-overlay img{max-width:95%;max-height:90vh;object-fit:contain;border-radius:8px}
+.photo-zoom-close{position:absolute;top:16px;right:16px;color:#fff;font-size:28px;background:none;border:none;cursor:pointer;z-index:201}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .result-area.show .result-item,.result-area.show .score-card{animation:fadeInUp .3s ease both}
 .result-area.show .result-item:nth-child(2){animation-delay:.06s}
@@ -245,19 +259,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 
 <!-- ====== 钓点页 ====== -->
 <div class="page" id="pageSpot">
-<div class="top-bar"><h1>📍 钓点地图</h1><p>查看钓点，记录出钓位置</p></div>
+<div class="top-bar"><h1>📸 钓鱼记录</h1><p>查看你的钓鱼精彩瞬间</p></div>
 <div class="card">
-<button class="btn-primary" onclick="initSpotMap()">📍 定位并打开地图</button>
-<button class="btn-secondary" onclick="openAmap()" style="margin-top:8px">🗺️ 打开高德地图APP</button>
-<div id="spotMapContainer"></div>
-<div id="spotStatus" style="font-size:12px;color:var(--text-muted);margin-top:6px;text-align:center"></div>
+<button class="btn-primary" onclick="loadRecordGallery()">📸 查看钓鱼记录</button>
+<div id="recordGallery" class="record-gallery"></div>
+<div id="recordEmpty" class="record-empty" style="display:none">还没有带照片的钓鱼记录<br>去写日记时上传照片吧 📷</div>
 </div>
 <div class="card">
-<div class="tip-box"><div class="tip-title">💡 使用说明</div>
-• 点击"定位并打开地图"可查看当前位置和日记标记<br>
-• 🎣 图标为你的历史出钓位置（来自日记记录）<br>
-• 点击"打开高德地图APP"可使用高德地图搜索附近钓点<br>
-• 日记中记录的地点会自动显示在地图上</div>
+<button class="btn-secondary" onclick="openAmap()">🗺️ 查看地图</button>
+<div id="spotMapContainer"></div>
+<div id="spotStatus" style="font-size:12px;color:var(--text-muted);margin-top:6px;text-align:center"></div>
 </div>
 </div>
 
@@ -268,7 +279,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 <div style="text-align:center;padding:16px 0">
 <div style="font-size:50px;margin-bottom:8px">🎣</div>
 <div style="font-size:18px;font-weight:700;color:var(--primary-dark)">钓鱼分析助手</div>
-<div style="font-size:12px;color:var(--text-muted);margin-top:3px">v3.0.0</div>
+<div style="font-size:12px;color:var(--text-muted);margin-top:3px">v3.1.0</div>
 </div>
 <div style="font-size:12px;line-height:1.7;color:var(--text-light);margin-top:12px">
 <p>专为钓鱼新手打造的智能分析工具。</p>
@@ -295,17 +306,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 <div id="diaryViewContent"></div>
 </div>
 </div>
+<!-- 图片全屏查看弹窗 -->
+<div class="photo-zoom-overlay" id="photoZoomOverlay" onclick="closePhotoZoom()">
+<button class="photo-zoom-close" onclick="closePhotoZoom()">✕</button>
+<img id="photoZoomImg" src="" alt="放大查看">
+</div>
 
 <div class="bottom-nav">
 <div class="nav-item active" onclick="switchPage('pageAnalyze',this)"><div class="nav-icon">🔍</div><div class="nav-label">分析</div></div>
 <div class="nav-item" onclick="switchPage('pageKnowledge',this)"><div class="nav-icon">📚</div><div class="nav-label">知识</div></div>
 <div class="nav-item" onclick="switchPage('pageDiary',this)"><div class="nav-icon">📖</div><div class="nav-label">日记</div></div>
-<div class="nav-item" onclick="switchPage('pageSpot',this)"><div class="nav-icon">📍</div><div class="nav-label">钓点</div></div>
+<div class="nav-item" onclick="switchPage('pageSpot',this)"><div class="nav-icon">📸</div><div class="nav-label">记录</div></div>
 <div class="nav-item" onclick="switchPage('pageAbout',this)"><div class="nav-icon">⚙️</div><div class="nav-label">设置</div></div>
 </div>
 
 <!-- 高德地图JS API -->
-<script src="https://webapi.amap.com/maps?v=2.0&key=fa17f05f00b4c8f911281ea43c8126b4&plugin=AMap.Geolocation,AMap.PlaceSearch"></script>
+<script src="https://webapi.amap.com/maps?v=2.0&key=fa17f05f00b4c8f911281ea43c8126b4&plugin=AMap.Geolocation,AMap.PlaceSearch,AMap.Geocoder"></script>
 <script>
 // ===== 高德地图Key配置 =====
 const AMAP_KEY='fa17f05f00b4c8f911281ea43c8126b4';
@@ -330,12 +346,35 @@ const st=document.getElementById('weatherStatus');
 btn.classList.add('loading');
 btn.textContent='⏳ 正在定位...';
 st.textContent='';
+// 优先高德定位
+if(typeof AMap!=='undefined'&&AMAP_KEY){
+const geo=new AMap.Geolocation({enableHighAccuracy:true,timeout:10000,needAddress:true,extensions:'all'});
+geo.getCurrentPosition((status,result)=>{
+if(status==='complete'){
+const lat=result.position.lat,lon=result.position.lng;
+const addr=result.formattedAddress||`${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+btn.textContent='⏳ 正在获取天气...';
+st.textContent=`📍 ${addr}`;
+doFetchWeather(lat,lon,st,btn);
+}else{
+// 高德定位失败回退浏览器
+fallbackFetchWeather(btn,st);
+}
+});
+}else{
+fallbackFetchWeather(btn,st);
+}
+}
+function fallbackFetchWeather(btn,st){
 if(!navigator.geolocation){st.textContent='⚠️ 浏览器不支持定位';resetWeatherBtn();return;}
 navigator.geolocation.getCurrentPosition(pos=>{
 const lat=pos.coords.latitude,lon=pos.coords.longitude;
 btn.textContent='⏳ 正在获取天气...';
 st.textContent=`📍 ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
-// 使用Open-Meteo获取更详细数据：包含相对湿度、露点等
+doFetchWeather(lat,lon,st,btn);
+},err=>{st.textContent='⚠️ 定位失败，请检查位置权限';resetWeatherBtn();},{timeout:15000,enableHighAccuracy:true});
+}
+function doFetchWeather(lat,lon,st,btn){
 fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto&forecast_days=1`)
 .then(r=>r.json()).then(d=>{
 const c=d.current;
@@ -375,7 +414,6 @@ st.textContent=`✅ 已获取：${Math.round(c.temperature_2m)}°C ${weatherName
 st.style.color='var(--primary)';
 resetWeatherBtn();
 }).catch(e=>{st.textContent='⚠️ 获取天气失败，请手动填写';resetWeatherBtn();});
-},err=>{st.textContent='⚠️ 定位失败，请检查位置权限';resetWeatherBtn();},{timeout:15000,enableHighAccuracy:true});
 }
 function resetWeatherBtn(){const b=document.getElementById('btnWeather');b.classList.remove('loading');b.textContent='📍 定位并获取当前天气';}
 
@@ -518,32 +556,53 @@ window.scrollTo({top:0,behavior:'smooth'});
 }
 function hideDiaryForm(){document.getElementById('diaryFormCard').style.display='none';document.getElementById('photoPreview').innerHTML='';document.getElementById('diaryMapContainer').style.display='none';}
 function onFishSelect(sel){document.getElementById('fishOther').style.display=sel.value==='其他'?'block':'none';}
-function previewPhoto(input){const pv=document.getElementById('photoPreview');pv.innerHTML='';if(input.files&&input.files[0]){const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas');const max=200;let w=img.width,h=img.height;if(w>max){h=h*max/w;w=max;}if(h>max){w=w*max/h;h=max;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);const thumb=document.createElement('img');thumb.src=canvas.toDataURL('image/jpeg',0.6);pv.appendChild(thumb);};img.src=e.target.result;};reader.readAsDataURL(input.files[0]);}}
+function previewPhoto(input){const pv=document.getElementById('photoPreview');pv.innerHTML='';if(input.files&&input.files[0]){const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas');const max=800;let w=img.width,h=img.height;if(w>max){h=h*max/w;w=max;}if(h>max){w=w*max/h;h=max;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);const dataUrl=canvas.toDataURL('image/jpeg',0.8);const thumb=document.createElement('img');thumb.src=dataUrl;thumb.style.width='80px';thumb.style.height='80px';thumb.style.objectFit='cover';thumb.style.borderRadius='8px';thumb.style.border='2px solid var(--border)';pv.appendChild(thumb);};img.src=e.target.result;};reader.readAsDataURL(input.files[0]);}}
 
 // 日记定位
 let diaryLat=0,diaryLng=0,diaryMap=null;
 function locateDiary(){
-if(!navigator.geolocation){alert('浏览器不支持定位');return;}
-navigator.geolocation.getCurrentPosition(pos=>{
-diaryLat=pos.coords.latitude;diaryLng=pos.coords.longitude;
-document.getElementById('diaryPlace').value=`${diaryLat.toFixed(4)}, ${diaryLng.toFixed(4)}`;
+if(typeof AMap!=='undefined'&&AMAP_KEY){
+// 优先使用高德定位（WiFi+基站，更精确）
+const geolocation=new AMap.Geolocation({enableHighAccuracy:true,timeout:10000,needAddress:true,extensions:'all'});
+geolocation.getCurrentPosition((status,result)=>{
+if(status==='complete'){
+diaryLat=result.position.lat;diaryLng=result.position.lng;
+const addr=result.formattedAddress||`${diaryLat.toFixed(4)}, ${diaryLng.toFixed(4)}`;
+document.getElementById('diaryPlace').value=addr;
 // 用高德地图显示位置
-if(AMAP_KEY&&typeof AMap!=='undefined'){
 document.getElementById('diaryMapContainer').style.display='block';
 diaryMap=new AMap.Map('diaryMapContainer',{zoom:14,center:[diaryLng,diaryLat]});
 new AMap.Marker({position:[diaryLng,diaryLat],map:diaryMap,title:'出钓位置'});
 // 点击地图选位置
 diaryMap.on('click',e=>{
 diaryLng=e.lnglat.getLng();diaryLat=e.lnglat.getLat();
+// 逆地理编码获取地名
+const geocoder=new AMap.Geocoder();
+geocoder.getAddress([diaryLng,diaryLat],(s2,r2)=>{
+if(s2==='complete'&&r2.info==='OK'){
+document.getElementById('diaryPlace').value=r2.formattedAddress;
+}else{
 document.getElementById('diaryPlace').value=`${diaryLat.toFixed(4)}, ${diaryLng.toFixed(4)}`;
+}
+});
 diaryMap.clearMap();
 new AMap.Marker({position:[diaryLng,diaryLat],map:diaryMap,title:'出钓位置'});
 });
 }else{
-// 没有高德Key时用简单提示
-document.getElementById('diaryMapContainer').style.display='none';
-alert('已获取位置坐标！\n如需地图功能，请在设置中配置高德地图Key。');
+// 高德定位失败，回退浏览器定位
+fallbackLocateDiary();
 }
+});
+}else{
+// 无高德，用浏览器定位
+fallbackLocateDiary();
+}
+}
+function fallbackLocateDiary(){
+if(!navigator.geolocation){alert('浏览器不支持定位');return;}
+navigator.geolocation.getCurrentPosition(pos=>{
+diaryLat=pos.coords.latitude;diaryLng=pos.coords.longitude;
+document.getElementById('diaryPlace').value=`${diaryLat.toFixed(4)}, ${diaryLng.toFixed(4)}`;
 },err=>{alert('定位失败，请检查位置权限');},{timeout:10000,enableHighAccuracy:true});
 }
 
@@ -580,54 +639,99 @@ html+=`<div class="dv-row"><span class="dv-label">⚖️ 重量</span><span clas
 html+=`<div class="dv-row"><span class="dv-label">⏱️ 时长</span><span class="dv-val">${d.hours?d.hours+'小时':'—'}</span></div>`;
 html+=`<div class="dv-row"><span class="dv-label">🪱 饵料</span><span class="dv-val">${d.bait||'—'}</span></div>`;
 if(d.note)html+=`<div class="dv-note">💡 心得体会<br>${d.note}</div>`;
-if(d.photo)html+=`<img class="dv-photo" src="${d.photo}" alt="钓获照片">`;
+if(d.photo)html+=`<img class="dv-photo" src="${d.photo}" alt="钓获照片" onclick="event.stopPropagation();zoomPhoto('${d.photo.replace(/'/g,"\\'")}')">`;
 document.getElementById('diaryViewContent').innerHTML=html;
 document.getElementById('diaryViewOverlay').classList.add('show');
 }
 function closeDiaryView(){document.getElementById('diaryViewOverlay').classList.remove('show');}
+function zoomPhoto(src){document.getElementById('photoZoomImg').src=src;document.getElementById('photoZoomOverlay').classList.add('show');}
+function closePhotoZoom(){document.getElementById('photoZoomOverlay').classList.remove('show');}
 
-// ===== 钓点地图 =====
+// ===== 钓鱼记录 =====
 let spotMap=null;
+function loadRecordGallery(){
+const list=getDiary();
+const gallery=document.getElementById('recordGallery');
+const empty=document.getElementById('recordEmpty');
+const photoDiaries=list.filter(d=>d.photo);
+if(photoDiaries.length===0){
+gallery.innerHTML='';
+empty.style.display='block';
+return;
+}
+empty.style.display='none';
+gallery.innerHTML=photoDiaries.map((d,i)=>{
+const origIdx=list.indexOf(d);
+return`<div class="record-card" onclick="viewDiary(${origIdx})"><img src="${d.photo}" alt="${d.fish||'钓获'}"><div class="rc-info"><div class="rc-date">${d.date||'—'} ${d.weather||''}</div><div class="rc-fish">🐟 ${d.fish||'未记录'}</div><div class="rc-detail">${d.count?d.count+'条 ':''}${d.weight?d.weight+'斤 ':''}${d.place?'📍'+d.place.substring(0,10):''}</div></div></div>`;
+}).join('');
+}
 function initSpotMap(){
 const st=document.getElementById('spotStatus');
 if(!AMAP_KEY||typeof AMap==='undefined'){
-st.textContent='⚠️ 请先配置高德地图Key（在设置页查看说明）';return;
+st.textContent='⚠️ 请先配置高德地图Key';return;
 }
-if(!navigator.geolocation){st.textContent='⚠️ 浏览器不支持定位';return;}
 st.textContent='⏳ 正在定位...';
+// 优先高德定位
+const geo=new AMap.Geolocation({enableHighAccuracy:true,timeout:10000});
+geo.getCurrentPosition((status,result)=>{
+if(status==='complete'){
+const lat=result.position.lat,lng=result.position.lng;
+showSpotMap(lat,lng,st);
+}else{
+// 回退浏览器定位
+if(!navigator.geolocation){st.textContent='⚠️ 浏览器不支持定位';return;}
 navigator.geolocation.getCurrentPosition(pos=>{
-const lat=pos.coords.latitude,lng=pos.coords.longitude;
+showSpotMap(pos.coords.latitude,pos.coords.longitude,st);
+},err=>{st.textContent='⚠️ 定位失败，请检查位置权限';},{timeout:15000,enableHighAccuracy:true});
+}
+});
+}
+function showSpotMap(lat,lng,st){
 document.getElementById('spotMapContainer').style.display='block';
 spotMap=new AMap.Map('spotMapContainer',{zoom:13,center:[lng,lat]});
-// 当前位置标记
 new AMap.Marker({position:[lng,lat],map:spotMap,title:'我的位置',icon:new AMap.Icon({size:new AMap.Size(25,34),image:'https://webapi.amap.com/theme/v1.3/markers/n/loc.png'})});
-// 加载日记中的出钓位置
 const diaries=getDiary().filter(d=>d.lat&&d.lng);
 diaries.forEach(d=>{
 const marker=new AMap.Marker({position:[d.lng,d.lat],map:spotMap,title:d.place||'出钓位置'});
 marker.setLabel({content:`🎣 ${d.fish||''}`,direction:'top'});
-// 点击标记显示日记信息
-const info=new AMap.InfoWindow({content:`<div style="padding:8px;font-size:13px"><strong>${d.place||'出钓位置'}</strong><br>${d.date} ${d.weather||''}<br>钓获：${d.fish||'—'} ${d.count?d.count+'条':''} ${d.weight?d.weight+'斤':''}</div>`});
+const infoContent=d.photo?
+`<div style="padding:8px;font-size:13px"><img src="${d.photo}" style="width:100%;border-radius:6px;margin-bottom:6px"><strong>${d.place||'出钓位置'}</strong><br>${d.date} ${d.weather||''}<br>钓获：${d.fish||'—'} ${d.count?d.count+'条':''} ${d.weight?d.weight+'斤':''}</div>`:
+`<div style="padding:8px;font-size:13px"><strong>${d.place||'出钓位置'}</strong><br>${d.date} ${d.weather||''}<br>钓获：${d.fish||'—'} ${d.count?d.count+'条':''} ${d.weight?d.weight+'斤':''}</div>`;
+const info=new AMap.InfoWindow({content:infoContent});
 marker.on('click',()=>info.open(spotMap,marker.getPosition()));
 });
 st.textContent=`✅ 已定位，共${diaries.length}个出钓标记`;
-},err=>{st.textContent='⚠️ 定位失败，请检查位置权限';},{timeout:15000,enableHighAccuracy:true});
 }
 
 function openAmap(){
-// 先获取当前位置，再打开高德地图
 const st=document.getElementById('spotStatus');
 st.textContent='⏳ 正在获取当前位置...';
+// 优先高德定位
+if(typeof AMap!=='undefined'&&AMAP_KEY){
+const geo=new AMap.Geolocation({enableHighAccuracy:true,timeout:10000});
+geo.getCurrentPosition((status,result)=>{
+if(status==='complete'){
+const lat=result.position.lat,lng=result.position.lng;
+st.textContent=`✅ 已定位`;
+doOpenAmap(lat,lng);
+}else{
+fallbackOpenAmap(st);
+}
+});
+}else{
+fallbackOpenAmap(st);
+}
+}
+function fallbackOpenAmap(st){
 if(!navigator.geolocation){
-st.textContent='⚠️ 浏览器不支持定位，打开默认位置';
+st.textContent='⚠️ 浏览器不支持定位';
 doOpenAmap(0,0);return;
 }
 navigator.geolocation.getCurrentPosition(pos=>{
-const lat=pos.coords.latitude,lng=pos.coords.longitude;
-st.textContent=`✅ 已定位 ${lat.toFixed(2)}, ${lng.toFixed(2)}`;
-doOpenAmap(lat,lng);
+st.textContent='✅ 已定位';
+doOpenAmap(pos.coords.latitude,pos.coords.longitude);
 },err=>{
-st.textContent='⚠️ 定位失败，打开默认位置';
+st.textContent='⚠️ 定位失败';
 doOpenAmap(0,0);
 },{timeout:10000,enableHighAccuracy:true});
 }
